@@ -25,7 +25,7 @@ local tsuru
 local tsuru1
 local tsuru2
 local tsuru3
-local nameTsuruBefore
+local lastTsuruColor
 local speed = 10000
 
 --functions
@@ -34,7 +34,7 @@ local gameView = {}
 local addOri = {}
 local addTsurus = {}
 local update = {}
-local onTouch = {}
+local onTouchTsuru = {}
 local gameOver = {}
 local speedUp = {}
 
@@ -53,15 +53,14 @@ function gameView()
   Runtime:addEventListener('enterFrame', update)
 
   --show distance
---  distanceText = display.newText('Distância 0.0 km', 250, 22, system.nativeFont, 12)
---  distanceText:setTextColor(68, 68, 68)
+  distanceText = display.newText("Distância 0 m", _W - 250, _H - 300, native.systemFontBold, 20)
+  distanceText:setTextColor(68, 68, 68)
 end
 
-distanceText = display.newText("Distância 0 m", _W - 250, _H - 300, native.systemFontBold, 20)
-distanceText:setTextColor(68, 68, 68)
+
   --end
   function distanceUp()
-     --incrementando a distancia
+     --incrementando a distância
       distance = distance + 60
       distanceText.text = string.format("Distância %d m", distance)
   end
@@ -76,24 +75,24 @@ function addTsurus(event)
 
     --Add 3 tsurus
     --Add tsuru on top
-    tsuru1 = display.newImage("tsuru.png")
+    tsuru1 = display.newImage("images/tsuru-cinza.png")
     tsuru1.x = _W
     tsuru1.y = _H - 250
-    tsuru1.name = "tsuru-top"
-    physics.addBody(tsuru1, "static")
+    tsuru1.name = "tsuru-cinza"
+    physics.addBody(tsuru1, "images/static")
 
     --Add tsuru in the middle
-    tsuru2 = display.newImage("tsuru.png")
+    tsuru2 = display.newImage("images/tsuru-amarelo.png")
     tsuru2.x = _W
     tsuru2.y = _H - 150
-    tsuru2.name = "tsuru-middle"
+    tsuru2.name = "tsuru-amarelo"
     physics.addBody(tsuru2, "static")
 
     --Add tsuru at the bottom
-    tsuru3 = display.newImage("tsuru.png")
+    tsuru3 = display.newImage("images/tsuru-vermelho.png")
     tsuru3.x = _W
     tsuru3.y = _H - 50
-    tsuru3.name = "tsuru-bottom"
+    tsuru3.name = "tsuru-vermelho"
     physics.addBody(tsuru3, "static")
 
     --transition tsurrus
@@ -102,9 +101,9 @@ function addTsurus(event)
     transition.to(tsuru3, {time = speed, x = -150, y = tsuru3.y, tag="all"})
 
     --Add handler on touch
-    tsuru1.touch = onTouch
-    tsuru2.touch = onTouch
-    tsuru3.touch = onTouch
+    tsuru1.touch = onTouchTsuru
+    tsuru2.touch = onTouchTsuru
+    tsuru3.touch = onTouchTsuru
 
     tsuru1:addEventListener("touch", tsuru1)
     tsuru2:addEventListener("touch", tsuru2)
@@ -130,16 +129,16 @@ function update()
 end
 
 function addOri()
-  tsuru = display.newImage("tsuru.png")
+  tsuru = display.newImage("images/tsuru.png")
   tsuru.x = _W
   tsuru.y = _H - 150
   tsuru.name = 'tsuru-middle'
   physics.addBody(tsuru, "static")
 
 
-  nameTsuruBefore = tsuru.name
+  lastTsuruColor = tsuru.name
 
-  ori = display.newImage('ori.png')
+  ori = display.newImage('images/ori.png')
   ori.x = tsuru.x
   ori.y = tsuru.y - 25
   physics.addBody(ori, "dynamic")
@@ -149,81 +148,28 @@ function addOri()
 
  transition.to(ori, {time = speed, x = -150, y = ori.y, tag="all"})
 
-  --tsuru.collision = onTouch
+  --tsuru.collision = onTouchTsuru
 
 --  tsuru:addEventListener("collision", tsuru)
 
   transition.to(tsuru, {time = speed, x = -150, y = tsuru.y, tag="all"})
 end
 
---[[function gameListeners(action)
-  if(action == 'add') then
-      tsuruTimer = timer.performWithDelay(3000, addTsurus, 0 )
-      Runtime:addEventListener('touch', moveori)
-      Runtime:addEventListener('enterFrame', update)
-      --tsuruTimer = timer.performWithDelay(800, addTsurus, 0)
-      ori:addEventListener('collision', onTouch)
-  else
-    Runtime:removeEventListener('touch', moveori)
-    Runtime:removeEventListener('enterFrame', update)
-    timer.cancel(tsuruTimer)
-    tsuruTimer = nil
-    ori:removeEventListener('collision', onTouch)
-  end
-end]]--
-
---[[
-function update1(e)
-  -- Screen Borders
-  if(ori.x <= 0) then --Left
-  ori.x = 0
-  elseif(ori.x >= (_W - ori.width)) then --Right
-  ori.x = (_W - ori.width)
-  end
-  -- ori Movement
-  ori.y = ori.y + moveSpeed
-   for i = 1, tsurus.numChildren do
-  -- tsurus Movement
-  tsurus[i].y = tsurus[i].y - moveSpeed
-  end
-
-  -- distance
-  distance = distance + 1
-  distanceText.text = distance
-  -- Lose Lives
-  if(ori.y > _H or ori.y < -5) then
-  -- ori.x = tsurus[tsurus.numChildren - 1].x
-  --ori.y = tsurus[tsurus.numChildren - 1].y - ori.height
-  --lives = lives - 1
-  --livesTF.text = 'x' .. lives
-    gameOver()
-end
-
--- Levels
-
-
-if(distance > 500 and distance < 502) then
-moveSpeed = 3
-end
-end
-]]--
-
-function onTouch(self, event)
+function onTouchTsuru(self, event)
   --Moves Ori to the tsuru touched
-  if(event.phase == "began" and self.x > ori.x) then
+  if(event.phase == "began" and self.x > ori.x and self.x < (ori.x + 200)) then
   --  transition.cancel(ori)
-
     ori.x = self.x
     ori.y = self.y - 25
 
     transition.to(ori, {time = speed, x = -150, y = ori.y, tag="all"})
 
-    if(self.name == nameTsuruBefore) then
+    if(self.name == lastTsuruColor) then
       gameOver()
     end
 
     distanceUp()
-    nameTsuruBefore = self.name
+    lastTsuruColor = self.name
   end
 end
 
