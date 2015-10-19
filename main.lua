@@ -12,6 +12,7 @@ local _H = display.contentHeight
 local physics = require('physics')
 physics.start()
 --physics.setGravity( 0, 0)
+
 --variables
 local background
 local distanceText
@@ -26,7 +27,12 @@ local tsuru1
 local tsuru2
 local tsuru3
 local lastTsuruColor
+local lastTsuruShape
+local currentTsuru
 local speed = 10000
+local differentiationMode
+local differentiationText
+local differentiationLabel
 
 --functions
 local Main = {}
@@ -37,6 +43,9 @@ local update = {}
 local onTouchTsuru = {}
 local gameOver = {}
 local speedUp = {}
+local differentiation = {}
+local changeDifferentiationMode = {}
+local jump = {}
 
 --Main function
 function Main()
@@ -45,28 +54,35 @@ function Main()
 end
 
 function gameView()
+
+  differentiationLabel = display.newText("Diferenciação:", _W - 350, _H - 300, native.systemFontBold, 20)
+  differentiationLabel:setTextColor(68, 68, 68)
+
+  differentiationText = display.newText("", _W - 260, _H - 300, native.systemFontBold, 20)
+  differentiationText:setTextColor(68, 68, 68)
+
+  -- show distance
+  distanceText = display.newText("Distância 0 m", _W - 150, _H - 300, native.systemFontBold, 20)
+  distanceText:setTextColor(68, 68, 68)
+
   --Add Ori
   addOri()
   --Add tsurus
   tsuruTimer = timer.performWithDelay(2000, addTsurus, 0 )
   --Update the scene
   Runtime:addEventListener('enterFrame', update)
-
-  --show distance
-  distanceText = display.newText("Distância 0 m", _W - 250, _H - 300, native.systemFontBold, 20)
-  distanceText:setTextColor(68, 68, 68)
 end
 
-
   --end
-  function distanceUp()
+--Game's Distance up
+function distanceUp()
      --incrementando a distância
       distance = distance + 60
       distanceText.text = string.format("Distância %d m", distance)
-  end
+end
   dtc = timer.performWithDelay( 1000, distanciaUp, 0 )
 
-
+--Add Tsurus
 function addTsurus(event)
   --Speed up each 15 tsurus added
     if(event.count % 3 == 0 ) then
@@ -78,21 +94,24 @@ function addTsurus(event)
     tsuru1 = display.newImage("images/tsuru-cinza.png")
     tsuru1.x = _W
     tsuru1.y = _H - 250
-    tsuru1.name = "tsuru-cinza"
-    physics.addBody(tsuru1, "images/static")
+    tsuru1.color = "gray"
+    tsuru1.shape = "shape1"
+    physics.addBody(tsuru1, "static")
 
     --Add tsuru in the middle
     tsuru2 = display.newImage("images/tsuru-amarelo.png")
     tsuru2.x = _W
     tsuru2.y = _H - 150
-    tsuru2.name = "tsuru-amarelo"
+    tsuru2.color = "yellow"
+    tsuru2.shape = "shape2"
     physics.addBody(tsuru2, "static")
 
     --Add tsuru at the bottom
     tsuru3 = display.newImage("images/tsuru-vermelho.png")
     tsuru3.x = _W
     tsuru3.y = _H - 50
-    tsuru3.name = "tsuru-vermelho"
+    tsuru3.color = "red"
+    tsuru3.shape = "shape3"
     physics.addBody(tsuru3, "static")
 
     --transition tsurrus
@@ -113,6 +132,7 @@ function addTsurus(event)
     --distanceText.text = speed
 end
 
+--Game's speed up
 function speedUp()
   speed = speed - 1000
 
@@ -128,15 +148,16 @@ function update()
   --.text  = distance
 end
 
+--Add ori to game
 function addOri()
   tsuru = display.newImage("images/tsuru.png")
   tsuru.x = _W
   tsuru.y = _H - 150
-  tsuru.name = 'tsuru-middle'
+  tsuru.color = ""
+  tsuru.shape = ""
   physics.addBody(tsuru, "static")
 
-
-  lastTsuruColor = tsuru.name
+  --lastTsuruColor = tsuru.name
 
   ori = display.newImage('images/ori.png')
   ori.x = tsuru.x
@@ -153,8 +174,12 @@ function addOri()
 --  tsuru:addEventListener("collision", tsuru)
 
   transition.to(tsuru, {time = speed, x = -150, y = tsuru.y, tag="all"})
+
+  --differentiation rule
+  differentiation(tsuru)
 end
 
+--Tsuru is touched
 function onTouchTsuru(self, event)
   --Moves Ori to the tsuru touched
   if(event.phase == "began" and self.x > ori.x and self.x < (ori.x + 200)) then
@@ -164,25 +189,54 @@ function onTouchTsuru(self, event)
 
     transition.to(ori, {time = speed, x = -150, y = ori.y, tag="all"})
 
-    if(self.name == lastTsuruColor) then
-      gameOver()
-    end
+    differentiation(self)
 
     distanceUp()
-    lastTsuruColor = self.name
+
+    changeDifferentiationMode()
   end
 end
 
+--Tsurus differentiation
+function differentiation(currentTsuru)
+  if(differentiationMode == "cor") then
+    if(currentTsuru.color == lastTsuruColor) then
+      gameOver()
+    end
+  else
+    if(currentTsuru.shape == lastTsuruShape) then
+      gameOver()
+    end
+  end
 
+  lastTsuruColor = currentTsuru.color
+  lastTsuruShape = currentTsuru.shape
+
+  changeDifferentiationMode()
+end
+
+--Change the tsurus differentiation mode
+function changeDifferentiationMode()
+  local randomNumber = math.random(0,1)
+
+  if(randomNumber == 0) then
+    differentiationMode = "cor"
+  else
+    differentiationMode = "forma"
+  end
+
+  differentiationText.text = string.format("%s", differentiationMode)
+
+end
+
+--Game Over
 function gameOver()
   transition.cancel("all")
   timer.cancel(tsuruTimer)
 
-  --alertGameOver = display.newText("Fim de Jogo!", 250, 140, native.systemFont, 30)
-  alertGameOver  = display.newText( "Fim de Jogo!", 250, 140, native.systemFont, 30 )
+  alertGameOver  = display.newText( "Fim de Jogo!", 250, 140, native.systemFont, 30)
 
   transition.from(alertGameOver, {time = 200})
 end
-
 
 Main()
