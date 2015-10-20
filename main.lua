@@ -11,42 +11,41 @@ local _H = display.contentHeight
 --Physics
 local physics = require('physics')
 physics.start()
---physics.setGravity( 0, 0)
 
 --variables
-local background
-local distanceText
-local distanceLabel
-local distance = 0
 local alertGameOver
-local ori
+local background
+local currentTsuru
+local differentiationLabel
+local differentiationText
+local differentiationMode
+local distanceLabel
+local distanceText
+local distance = 0
 local gameView
+local lastTsuruColor
+local lastTsuruShape
 local moveSpeed = 2
-local tsuruTimer
+local ori
+local speed = 10000
 local tsuru
+local tsuruTimer
 local tsuru1
 local tsuru2
 local tsuru3
-local lastTsuruColor
-local lastTsuruShape
-local currentTsuru
-local speed = 10000
-local differentiationMode
-local differentiationText
-local differentiationLabel
 
 --functions
-local Main = {}
-local gameView = {}
 local addOri = {}
 local addTsurus = {}
-local update = {}
-local onTouchTsuru = {}
-local gameOver = {}
-local speedUp = {}
-local differentiation = {}
 local changeDifferentiationMode = {}
+local differentiation = {}
+local gameOver = {}
+local gameView = {}
 local jump = {}
+local Main = {}
+local onTouchTsuru = {}
+local speedUp = {}
+local update = {}
 
 --Main function
 function Main()
