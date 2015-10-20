@@ -16,6 +16,7 @@ physics.start()
 --variables
 local background
 local distanceText
+local distanceLabel
 local distance = 0
 local alertGameOver
 local ori
@@ -54,15 +55,18 @@ function Main()
 end
 
 function gameView()
-
-  differentiationLabel = display.newText("Diferenciação:", _W - 350, _H - 300, native.systemFontBold, 20)
+  --show differentiation
+  differentiationLabel = display.newText("Diferenciação:", _W - 390, _H - 300, native.systemFontBold, 20)
   differentiationLabel:setTextColor(68, 68, 68)
 
-  differentiationText = display.newText("", _W - 260, _H - 300, native.systemFontBold, 20)
+  differentiationText = display.newText("", _W - 280, _H - 300, native.systemFontBold, 20)
   differentiationText:setTextColor(68, 68, 68)
 
   -- show distance
-  distanceText = display.newText("Distância 0 m", _W - 150, _H - 300, native.systemFontBold, 20)
+  distanceText = display.newText("Distância:", _W - 150, _H - 300, native.systemFontBold, 20)
+  distanceText:setTextColor(68, 68, 68)
+
+  distanceText = display.newText("0 m", _W - 50, _H - 300, native.systemFontBold, 20)
   distanceText:setTextColor(68, 68, 68)
 
   --Add Ori
@@ -78,7 +82,7 @@ end
 function distanceUp()
      --incrementando a distância
       distance = distance + 60
-      distanceText.text = string.format("Distância %d m", distance)
+      distanceText.text = string.format("%d m", distance)
 end
   dtc = timer.performWithDelay( 1000, distanciaUp, 0 )
 
