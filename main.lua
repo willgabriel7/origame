@@ -33,6 +33,7 @@ local tsuruTimer
 local tsuru1
 local tsuru2
 local tsuru3
+local imagePath = "images/"
 
 --functions
 local addOri = {}
@@ -46,7 +47,8 @@ local Main = {}
 local onTouchTsuru = {}
 local speedUp = {}
 local update = {}
-
+local getColor = {}
+local getShape= {}
 --Main function
 function Main()
   --Starts the game
@@ -76,7 +78,6 @@ function gameView()
   Runtime:addEventListener('enterFrame', update)
 end
 
-  --end
 --Game's Distance up
 function distanceUp()
      --incrementando a distância
@@ -92,29 +93,37 @@ function addTsurus(event)
     --  speedUp()
     end
 
+    local color1 = getColor()
+    local color2 = getColor()
+    local color3 = getColor()
+
+    local shape1 = getShape()
+    local shape2 = getShape()
+    local shape3 = getShape()
+
     --Add 3 tsurus
     --Add tsuru on top
-    tsuru1 = display.newImage("images/tsuru-cinza.png")
+    tsuru1 = display.newImage(imagePath .. "tsurus/tsuru_".. color1 .. "_" .. shape1 .. ".png")
     tsuru1.x = _W
     tsuru1.y = _H - 250
-    tsuru1.color = "gray"
-    tsuru1.shape = "shape1"
+    tsuru1.color = color1
+    tsuru1.shape = shape1
     physics.addBody(tsuru1, "static")
 
     --Add tsuru in the middle
-    tsuru2 = display.newImage("images/tsuru-amarelo.png")
+    tsuru2 = display.newImage(imagePath .. "tsurus/tsuru_".. color2 .. "_" .. shape2 .. ".png")
     tsuru2.x = _W
     tsuru2.y = _H - 150
-    tsuru2.color = "yellow"
-    tsuru2.shape = "shape2"
+    tsuru2.color = color2
+    tsuru2.shape = shape2
     physics.addBody(tsuru2, "static")
 
     --Add tsuru at the bottom
-    tsuru3 = display.newImage("images/tsuru-vermelho.png")
+    tsuru3 = display.newImage(imagePath .. "tsurus/tsuru_" .. color3 .. "_" .. shape3 .. ".png")
     tsuru3.x = _W
     tsuru3.y = _H - 50
-    tsuru3.color = "red"
-    tsuru3.shape = "shape3"
+    tsuru3.color = color3
+    tsuru3.shape = shape3
     physics.addBody(tsuru3, "static")
 
     --transition tsurrus
@@ -133,6 +142,34 @@ function addTsurus(event)
 
     --show speed
     --distanceText.text = speed
+end
+
+-- generate random color
+function getColor()
+  local color =  math.random(0, 3)
+  if(color == 0) then
+    color  = "red"
+  elseif (color == 1) then
+    color = "yellow"
+  else
+    color = "green"
+  end
+
+  return color
+end
+
+-- generate random shape
+function getShape()
+  local shape =  math.random(0, 3)
+  if(shape == 0) then
+    shape  = "shape1"
+  elseif (color == 1) then
+    shape = "shape2"
+  else
+    shape = "shape3"
+  end
+
+  return shape
 end
 
 --Game's speed up
