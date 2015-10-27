@@ -34,6 +34,8 @@ local tsuru1
 local tsuru2
 local tsuru3
 local imagePath = "images/"
+local colors = {"red", "yellow", "green"}
+local shapes = {"shape1", "shape2", "shape3"}
 
 --functions
 local addOri = {}
@@ -49,6 +51,8 @@ local speedUp = {}
 local update = {}
 local getColor = {}
 local getShape= {}
+local shuffleTable = {}
+
 --Main function
 function Main()
   --Starts the game
@@ -57,17 +61,17 @@ end
 
 function gameView()
   --show differentiation
-  differentiationLabel = display.newText("Diferenciação:", _W - 390, _H - 300, native.systemFontBold, 20)
+  differentiationLabel = display.newText("Diferenciação:", _W - 390, _H - 300, native.systemFontBold, 12)
   differentiationLabel:setTextColor(68, 68, 68)
 
-  differentiationText = display.newText("", _W - 280, _H - 300, native.systemFontBold, 20)
+  differentiationText = display.newText("", _W - 280, _H - 300, native.systemFontBold, 12)
   differentiationText:setTextColor(68, 68, 68)
 
   -- show distance
-  distanceText = display.newText("Distância:", _W - 150, _H - 300, native.systemFontBold, 20)
+  distanceText = display.newText("Distância:", _W - 150, _H - 300, native.systemFontBold, 12)
   distanceText:setTextColor(68, 68, 68)
 
-  distanceText = display.newText("0 m", _W - 50, _H - 300, native.systemFontBold, 20)
+  distanceText = display.newText("0 m", _W - 50, _H - 300, native.systemFontBold, 12)
   distanceText:setTextColor(68, 68, 68)
 
   --Add Ori
@@ -93,13 +97,16 @@ function addTsurus(event)
     --  speedUp()
     end
 
-    local color1 = getColor()
-    local color2 = getColor()
-    local color3 = getColor()
+    shuffleTable(colors)
+    shuffleTable(shapes)
 
-    local shape1 = getShape()
-    local shape2 = getShape()
-    local shape3 = getShape()
+    local color1 = colors[1]
+    local color2 = colors[2]
+    local color3 = colors[3]
+
+    local shape1 = shapes[1]
+    local shape2 = shapes[2]
+    local shape3 = shapes[3]
 
     --Add 3 tsurus
     --Add tsuru on top
@@ -146,28 +153,45 @@ end
 
 -- generate random color
 function getColor()
-  local color =  math.random(0, 3)
-  if(color == 0) then
+  local color =  math.random(1, 3)
+
+  if(color == 1 and color ~= lastColor) then
     color  = "red"
-  elseif (color == 1) then
+  elseif (color == 2 and color ~= lastColor) then
     color = "yellow"
   else
     color = "green"
   end
 
+  lastColor = color
+
   return color
+end
+
+function shuffleTable( t )
+    local rand = math.random
+    local iterations = #t
+    local j
+
+    for i = iterations, 2, -1 do
+        j = rand(i)
+        t[i], t[j] = t[j], t[i]
+    end
 end
 
 -- generate random shape
 function getShape()
-  local shape =  math.random(0, 3)
-  if(shape == 0) then
+  local shape =  math.random(1, 3)
+
+  if(shape == 1 and shape ~= lastShape) then
     shape  = "shape1"
-  elseif (color == 1) then
+  elseif (color == 2 and shape ~= lastShape) then
     shape = "shape2"
   else
     shape = "shape3"
   end
+
+  lastShape = shape
 
   return shape
 end
@@ -202,9 +226,9 @@ function addOri()
   ori = display.newImage('images/ori.png')
   ori.x = tsuru.x
   ori.y = tsuru.y - 25
-  physics.addBody(ori, "dynamic")
   ori.name = "ori"
   ori.isFixedRotation = true
+  physics.addBody(ori, "static")
   --ori.linearDamping = 5
 
  transition.to(ori, {time = speed, x = -150, y = ori.y, tag="all"})
@@ -222,8 +246,7 @@ end
 --Tsuru is touched
 function onTouchTsuru(self, event)
   --Moves Ori to the tsuru touched
-  if(event.phase == "began" and self.x > ori.x and self.x < (ori.x + 200)) then
-  --  transition.cancel(ori)
+  if(event.phase == "began" and self.x > ori.x and self.x < (ori.x + 150)) then
     ori.x = self.x
     ori.y = self.y - 25
 
