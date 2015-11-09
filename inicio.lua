@@ -51,7 +51,7 @@ end
 
 --------------------------------------------------------------------------------
 function loadBackground()
-  background = display.newImage("resources/images/logo.png", display.contentWidth, display.contentHeight)
+  background = display.newImage("resources/estilo/preto/fundo_inicial.png", display.contentWidth, display.contentHeight)
   background.x = display.contentCenterX
   background.y = display.contentCenterY
   scene.view:insert(background)
@@ -63,7 +63,7 @@ local configTransitionMenu = {
 
 function loadMenu()
   composer.removeScene("initial_screen")
-  composer.gotoScene("jogo", configTransitionMenu)
+  composer.gotoScene("menu", configTransitionMenu)
 end
 
 

@@ -9,9 +9,11 @@ local configTransicaoMenu = {
 --------------------------------------------------------------------------------
 
 local composer = require ("composer")
-composer.gotoScene("inicio", configTransicaoMenu)
+composer.gotoScene("menu", configTransicaoMenu)
 
 
 --------------------------------------------------------------------------------
 -- Variáveis globais
 --------------------------------------------------------------------------------
+distance = 0
+tsurusSaltados = 0
