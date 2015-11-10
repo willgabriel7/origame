@@ -127,7 +127,7 @@ function scene:destroy(event)
   Runtime:removeEventListener("touch", tsuru2)
   Runtime:removeEventListener("touch", tsuru3)
   display.remove(grupoTsurus)
-  display.remove(ori)
+  --display.remove(ori)
   display.remove(textoDiferenciacao)
   display.remove(etiquetaDiferenciacao)
   display.remove(textoDistancia)
@@ -293,6 +293,7 @@ function adicionarOri()
   ori.isFixedRotation = true
   physics.addBody(ori, "static")
   --ori.linearDamping = 5
+    grupoTsurus:insert(ori)
 
  transition.to(ori, {time = speed, x = -150, y = ori.y, tag="all"})
 
@@ -317,6 +318,7 @@ function selecionarTsuru(self, event)
 
     differentiation(self)
 
+    tsurusSaltados = tsurusSaltados + 1
     distanceUp()
   end
 end

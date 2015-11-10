@@ -122,9 +122,6 @@ function carregarFimDeJogo( )
   background.y = display.contentCenterY
   scene.view:insert(background)
 
-  --[[gameOverTxt = display.newText("Game Over", display.contentCenterX, display.contentCenterY - 90, native.systemFontBold, 50)
-  scene.view:insert(gameOverTxt)]]
-
   btnJogarNovamente = display.newImage(diretorioImagens .. "nova_chance.png")
   btnJogarNovamente.x = display.contentCenterX - 70
   btnJogarNovamente.y = display.contentCenterY + 80
@@ -135,11 +132,11 @@ function carregarFimDeJogo( )
   btnIrParaMenu.y = display.contentCenterY + 80
   scene.view:insert(btnIrParaMenu)
 
-  --[[distanciaPercorridaTxt = display.newText('Distância Percorrida: ' .. distance, display.contentCenterX, display.contentCenterY + 60, native.systemFontBold, 20)
+  distanciaPercorridaTxt = display.newText('Distância Percorrida: ' .. distance .. "m", display.contentCenterX, display.contentCenterY - 20, native.systemFontBold, 20)
   scene.view:insert(distanciaPercorridaTxt)
 
-  TsurusSaltadosTxt = display.newText('Tsurus Saltados: ' .. tsurusSaltados, display.contentCenterX, display.contentCenterY + 80, native.systemFontBold, 20)
-  scene.view:insert(TsurusSaltadosTxt)]]--
+  TsurusSaltadosTxt = display.newText('Tsurus Saltados: ' .. tsurusSaltados, display.contentCenterX, display.contentCenterY, native.systemFontBold, 20)
+  scene.view:insert(TsurusSaltadosTxt)
 end
 --------------------------------------------------------------------------------
 
