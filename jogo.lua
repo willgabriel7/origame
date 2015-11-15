@@ -1,4 +1,5 @@
 -- Origame
+-- por Gabriel Araújo
 
 -- Esconde a barra de status
 display.setStatusBar(display.HiddenStatusBar)
@@ -17,39 +18,33 @@ local composer = require("composer")
 local scene = composer.newScene()
 
 -- Variaveis
-local alertGameOver
-local background
 local TsuruAtual
 local etiquetaDiferenciacao
 local textoDiferenciacao
 local regraDiferenciacao
 local etiquetaDistancia
 local textoDistancia
---local distance = 0
-local gameView
 local ultimaCorSelecionada
 local ultimaFormaSelecionada
 local velocidadeMovimento = 2
 local ori
-local speed = 10000
+local velocidade = 10000
 local tsuru
 local tsuruTimer
 local tsuru1
 local tsuru2
 local tsuru3
-local diretorioImagens = "resources/images/"
+local caminhoDiretorioImagens = "resources/images/"
 local cores = {"red", "yellow", "green"}
 local formas = {"shape1", "shape2", "shape3"}
-local grupoTsurus
+local grupoImagens
 
 -- Funções
 local adicionarOri = {}
 local adicionarTsurus = {}
 local mudarRegraDiferenciacao = {}
-local differentiation = {}
-local gameOver = {}
-local gameView = {}
-local Main = {}
+local diferenciar = {}
+local fimDeJogo = {}
 local selecionarTsuru = {}
 local aumentarVelocidade = {}
 local update = {}
@@ -89,7 +84,7 @@ function scene:show(event)
     -- Chama quando a cena está na tela
     -- Inserir código para fazer que a cena venha "viva"
     -- Ex: start times, begin animation, play audio, etc
-    grupoTsurus = display.newGroup()
+    grupoImagens = display.newGroup()
 
     -- Adicionar Ori
     adicionarOri()
@@ -126,7 +121,7 @@ function scene:destroy(event)
   Runtime:removeEventListener("touch", tsuru1)
   Runtime:removeEventListener("touch", tsuru2)
   Runtime:removeEventListener("touch", tsuru3)
-  display.remove(grupoTsurus)
+  display.remove(grupoImagens)
   --display.remove(ori)
   display.remove(textoDiferenciacao)
   display.remove(etiquetaDiferenciacao)
@@ -137,13 +132,13 @@ function scene:destroy(event)
     -- ex: remover obejtos display, save state, cancelar transições e etc
 end
 
---Game's Distance up
-function distanceUp()
+-- Aumenta a distância
+function aumentarDistancia()
      --incrementando a distância
-      distance = distance + 60
-      textoDistancia.text = string.format("%d m", distance)
+      distancia = distancia + 60
+      textoDistancia.text = string.format("%d m", distancia)
 end
-  dtc = timer.performWithDelay( 1000, distanciaUp, 0 )
+  --dtc = timer.performWithDelay( 1000, aumentarDistancia, 0 )
 
 --Add Tsurus
 function adicionarTsurus(event)
@@ -165,7 +160,7 @@ function adicionarTsurus(event)
 
     --Add 3 tsurus
     --Add tsuru on top
-    tsuru1 = display.newImage(diretorioImagens .. "tsurus/tsuru_".. color1 .. "_" .. shape1 .. ".png")
+    tsuru1 = display.newImage(caminhoDiretorioImagens .. "tsurus/tsuru_".. color1 .. "_" .. shape1 .. ".png")
     tsuru1.x = LARGURA
     tsuru1.y = ALTURA - 250
     tsuru1.color = color1
@@ -173,7 +168,7 @@ function adicionarTsurus(event)
     physics.addBody(tsuru1, "static")
 
     --Add tsuru in the middle
-    tsuru2 = display.newImage(diretorioImagens .. "tsurus/tsuru_".. color2 .. "_" .. shape2 .. ".png")
+    tsuru2 = display.newImage(caminhoDiretorioImagens .. "tsurus/tsuru_".. color2 .. "_" .. shape2 .. ".png")
     tsuru2.x = LARGURA
     tsuru2.y = ALTURA - 150
     tsuru2.color = color2
@@ -181,7 +176,7 @@ function adicionarTsurus(event)
     physics.addBody(tsuru2, "static")
 
     --Add tsuru at the bottom
-    tsuru3 = display.newImage(diretorioImagens .. "tsurus/tsuru_" .. color3 .. "_" .. shape3 .. ".png")
+    tsuru3 = display.newImage(caminhoDiretorioImagens .. "tsurus/tsuru_" .. color3 .. "_" .. shape3 .. ".png")
     tsuru3.x = LARGURA
     tsuru3.y = ALTURA - 50
     tsuru3.color = color3
@@ -189,9 +184,9 @@ function adicionarTsurus(event)
     physics.addBody(tsuru3, "static")
 
     --transition tsurrus
-    transition.to(tsuru1, {time = speed, x = -150, y = tsuru1.y, tag="all"})
-    transition.to(tsuru2, {time = speed, x = -150, y = tsuru2.y, tag="all"})
-    transition.to(tsuru3, {time = speed, x = -150, y = tsuru3.y, tag="all"})
+    transition.to(tsuru1, {time = velocidade, x = -150, y = tsuru1.y, tag="all"})
+    transition.to(tsuru2, {time = velocidade, x = -150, y = tsuru2.y, tag="all"})
+    transition.to(tsuru3, {time = velocidade, x = -150, y = tsuru3.y, tag="all"})
 
     --Add handler on touch
     tsuru1.touch = selecionarTsuru
@@ -202,9 +197,9 @@ function adicionarTsurus(event)
     tsuru2:addEventListener("touch", tsuru2)
     tsuru3:addEventListener("touch", tsuru3)
 
-    grupoTsurus:insert(tsuru1)
-    grupoTsurus:insert(tsuru2)
-    grupoTsurus:insert(tsuru3)
+    grupoImagens:insert(tsuru1)
+    grupoImagens:insert(tsuru2)
+    grupoImagens:insert(tsuru3)
 
     --show speed
     --textoDistancia.text = speed
@@ -257,17 +252,17 @@ end
 
 --Game's speed up
 function aumentarVelocidade()
-  speed = speed - 1000
+  velocidade = velocidade - 1000
 
   --transition.cancel(ori)
-  transition.to(ori, {time = speed - 2000, x = -150, y = ori.y , tag="all"})
+  transition.to(ori, {time = velocidade - 2000, x = -150, y = ori.y , tag="all"})
 end
 
 function update()
   -- utilizar o tamanho da tela do dispositivo LARGURA
   if(ori.x < -75) then
-    --mudar para composer.gameOver()
-    gameOver()
+    --mudar para composer.fimDeJogo()
+    fimDeJogo()
   end
 
   --.text  = distance
@@ -275,36 +270,36 @@ end
 
 --Add ori to game
 function adicionarOri()
-  tsuru = display.newImage(diretorioImagens .. "tsuru.png")
+  tsuru = display.newImage(caminhoDiretorioImagens .. "tsuru.png")
   tsuru.x = LARGURA
   tsuru.y = ALTURA - 150
   tsuru.color = ""
   tsuru.shape = ""
   physics.addBody(tsuru, "static")
 
-  grupoTsurus:insert(tsuru)
+  grupoImagens:insert(tsuru)
 
   --ultimaCorSelecionada = tsuru.name
 
-  ori = display.newImage(diretorioImagens .. 'ori.png')
+  ori = display.newImage(caminhoDiretorioImagens .. 'ori.png')
   ori.x = tsuru.x
   ori.y = tsuru.y - 25
   ori.name = "ori"
   ori.isFixedRotation = true
   physics.addBody(ori, "static")
   --ori.linearDamping = 5
-    grupoTsurus:insert(ori)
+    grupoImagens:insert(ori)
 
- transition.to(ori, {time = speed, x = -150, y = ori.y, tag="all"})
+ transition.to(ori, {time = velocidade, x = -150, y = ori.y, tag="all"})
 
   --tsuru.collision = selecionarTsuru
 
 --  tsuru:addEventListener("collision", tsuru)
 
-  transition.to(tsuru, {time = speed, x = -150, y = tsuru.y, tag="all"})
+  transition.to(tsuru, {time = velocidade, x = -150, y = tsuru.y, tag="all"})
 
   --differentiation rule
-  differentiation(tsuru)
+  diferenciar(tsuru)
 end
 
 --Tsuru is touched
@@ -314,24 +309,24 @@ function selecionarTsuru(self, event)
     ori.x = self.x
     ori.y = self.y - 25
 
-    transition.to(ori, {time = speed, x = -150, y = ori.y, tag="all"})
+    transition.to(ori, {time = velocidade, x = -150, y = ori.y, tag="all"})
 
-    differentiation(self)
+    diferenciar(self)
 
-    tsurusSaltados = tsurusSaltados + 1
-    distanceUp()
+    totalTsurusSaltados = totalTsurusSaltados + 1
+    aumentarDistancia()
   end
 end
 
 --Tsurus differentiation
-function differentiation(TsuruAtual)
+function diferenciar(TsuruAtual)
   if(regraDiferenciacao == "cor") then
     if(TsuruAtual.color == ultimaCorSelecionada) then
-      gameOver()
+      fimDeJogo()
     end
   else
     if(TsuruAtual.shape == ultimaFormaSelecionada) then
-      gameOver()
+      fimDeJogo()
     end
   end
 
@@ -359,7 +354,7 @@ end
 --------------------------------------------------------------------------------
 -- Configuração de transição entre cenas
 --------------------------------------------------------------------------------
-local configTransicaoGameOver = {
+local transicaofimDeJogoConfig = {
 	effect = "fade", time = 1000
 }
 --------------------------------------------------------------------------------
@@ -368,9 +363,9 @@ local configTransicaoGameOver = {
 --------------------------------------------------------------------------------
 -- Função que chama cena para início do jogo
 --------------------------------------------------------------------------------
-function gameOver()
+function fimDeJogo()
   composer.removeScene("jogo")
-  composer.gotoScene("fim_de_jogo", configTransicaoGameOver)
+  composer.gotoScene("fim_de_jogo", transicaofimDeJogoConfig)
 end
 
 

@@ -1,15 +1,9 @@
---------------------------------------------------------------------------------
 -- Inicializar composer
---------------------------------------------------------------------------------
 local composer = require("composer")
 local scene = composer.newScene()
 
---------------------------------------------------------------------------------
 
-
---------------------------------------------------------------------------------
 -- Declarar/Inicializar variáveis/funções
---------------------------------------------------------------------------------
 local diretorioImagens = "resources/estilo/preto/"
 local btnJogar
 local btnCreditos
@@ -18,25 +12,16 @@ local jogar = {}
 local creditos = {}
 local carregarMenu = {}
 local fecharApp = {}
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Inicia a cena aqui
--- Ex:adicionar objetos display para "sceneGroup", adicionar touch Listeners,etc
---------------------------------------------------------------------------------
 function scene:create(event)
   local sceneGroup = self.view
   carregarMenu()
---  criarGrupos()
-
 end
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Scene:show
---------------------------------------------------------------------------------
 function scene:show(event)
   local sceneGroup = self.view
   local phase = event.phase
@@ -51,18 +36,11 @@ function scene:show(event)
     btnJogar:addEventListener("touch", jogar)
     btnCreditos:addEventListener("touch", creditos)
     btnSair:addEventListener("touch", fecharApp)
-
-    -- Chama quando a cena está na tela
-    -- Inserir código para fazer que a cena venha "viva"
-    -- Ex: start times, begin animation, play audio, etc
   end
 end
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Scene:hide
---------------------------------------------------------------------------------
 function scene:hide(event)
   local sceneGroup = self.view
   local phase = event.phase
@@ -75,23 +53,16 @@ function scene:hide(event)
     -- Chama imediatamente quando a cena está fora da tela
   end
 end
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Chamado quando cena atual é removida
---------------------------------------------------------------------------------
 function scene:destroy(event)
   local sceneGroup = self.view
-
   display.remove(background)
 end
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Carregar imagens contidas no menu
---------------------------------------------------------------------------------
 function carregarMenu( )
   background = display.newImageRect(diretorioImagens ..  "fundo_menu.png", display.contentWidth, display.contentHeight)
   background.x = display.contentCenterX
@@ -113,12 +84,9 @@ function carregarMenu( )
   btnSair.y = display.contentCenterY +  80
   scene.view:insert(btnSair)
 end
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Fechar app
---------------------------------------------------------------------------------
 function fecharApp()
       composer.removeScene("menu")
 
@@ -127,55 +95,40 @@ function fecharApp()
        else
            os.exit()
       end
-
 end
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Configuração de transição entre cenas
---------------------------------------------------------------------------------
-local configTransicaoJogo = {
+local transicaoJogoConfig = {
 	effect = "fade", time = 400
 }
---------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
+
 -- Configuração de transição entre cenas
---------------------------------------------------------------------------------
-local configTransicaoCreditos = {
+local transicaoCreditosConfig = {
 	effect = "fade", time = 550
 }
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Função que chama cena para início do jogo
---------------------------------------------------------------------------------
 function jogar( )
   composer.removeScene("menu")
-	composer.gotoScene("jogo", configTransicaoJogo)
+	composer.gotoScene("jogo", transicaoJogoConfig)
 end
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Função que chama cena de créditos do jogo
---------------------------------------------------------------------------------
 function creditos( )
   composer.removeScene("menu")
-	composer.gotoScene("creditos", configTransicaoCreditos)
+	composer.gotoScene("creditos", transicaoCreditosConfig)
 end
---------------------------------------------------------------------------------
 
 
---------------------------------------------------------------------------------
 -- Listener Setup
---------------------------------------------------------------------------------
 scene:addEventListener("create", scene)
 scene:addEventListener("show", scene)
 scene:addEventListener("hide", scene)
 scene:addEventListener("destroy", scene)
---------------------------------------------------------------------------------
+
 
 return scene

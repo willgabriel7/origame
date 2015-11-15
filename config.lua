@@ -4,7 +4,6 @@ application =
     {
         width = 320,
         height = 480,
---        scale = "letterbox"
         scale = "adaptive"
     },
 }

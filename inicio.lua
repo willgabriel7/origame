@@ -1,17 +1,15 @@
 local composer = require("composer")
 local scene = composer.newScene()
-local lm
-local loadMenu = {}
-local loadBackground = {}
---------------------------------------------------------------------------------
+local cm
+local carregaMenu = {}
+local carregaFundo = {}
+
+
 function scene:create(event)
   local sceneGroup = self.view
-
-  -- Inicia a cena aqui
-  -- Ex: adicionar objetos display para "sceneGroup"
-
-    loadBackground()
+  carregaFundo()
 end
+
 
 function scene:show(event)
   local sceneGroup = self.view
@@ -21,12 +19,10 @@ function scene:show(event)
     -- Chama quando a cena está fora da cena
   elseif (phase == "did") then
     -- Chama quando a cena está na tela
-    -- Inserir código para fazer que a cena venha "viva"
-    -- Ex: start times, begin animation, play audio, etc
-    lm = timer.performWithDelay(2000, loadMenu, 1)
-
+    cm = timer.performWithDelay(2000, carregaMenu, 1)
   end
 end
+
 
 function scene:hide(event)
   local sceneGroup = self.view
@@ -34,34 +30,32 @@ function scene:hide(event)
 
   if (phase == "will") then
     -- Chama quando a cena está na cena
-    -- Inserir código para "pausar" a cena
-    -- Ex: stop timers, stop animation, stop audio, etc
   elseif (phase == "did") then
     -- Chama imediatamente quando a cena está fora da tela
   end
 end
 
+
 function scene:destroy(event)
   local sceneGroup = self.view
-
-    -- Chamado antes da remoção de vista da cena ("sceneGroup")
-    -- Código para "limpar" a cena
-    -- ex: remover obejtos display, save state, cancelar transições e etc
+  -- Chamado antes da remoção de vista da cena ("sceneGroup")
 end
 
---------------------------------------------------------------------------------
-function loadBackground()
-  background = display.newImage("resources/estilo/preto/fundo_inicial.png", display.contentWidth, display.contentHeight)
-  background.x = display.contentCenterX
-  background.y = display.contentCenterY
-  scene.view:insert(background)
+
+function carregaFundo()
+  fundo = display.newImage("resources/estilo/preto/fundo_inicial.png", display.contentWidth, display.contentHeight)
+  fundo.x = display.contentCenterX
+  fundo.y = display.contentCenterY
+  scene.view:insert(fundo)
 end
+
 
 local configTransitionMenu = {
   effect = "fade", time = 1000
 }
 
-function loadMenu()
+
+function carregaMenu()
   composer.removeScene("initial_screen")
   composer.gotoScene("menu", configTransitionMenu)
 end
@@ -73,6 +67,5 @@ scene:addEventListener("show", scene)
 scene:addEventListener("hide", scene)
 scene:addEventListener("destroy", scene)
 
---------------------------------------------------------------------------------
 
 return scene

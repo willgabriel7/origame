@@ -1,19 +1,16 @@
 display.setStatusBar( display.HiddenStatusBar )
 
---------------------------------------------------------------------------------
+
 -- Configuração de transição para menu
---------------------------------------------------------------------------------
-local configTransicaoMenu = {
+local transicaoInicioConfig = {
 	effect = "fade", time = 1600
 }
---------------------------------------------------------------------------------
+
 
 local composer = require ("composer")
-composer.gotoScene("inicio", configTransicaoMenu)
+composer.gotoScene("inicio", transicaoInicioConfig)
 
 
---------------------------------------------------------------------------------
 -- Variáveis globais
---------------------------------------------------------------------------------
-distance = 0
-tsurusSaltados = 0
+distancia = 0
+totalTsurusSaltados = 0
