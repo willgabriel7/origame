@@ -8,7 +8,7 @@ local transicaoInicioConfig = {
 
 
 local composer = require ("composer")
-composer.gotoScene("inicio", transicaoInicioConfig)
+composer.gotoScene("jogo", transicaoInicioConfig)
 
 
 -- Variáveis globais

@@ -5,17 +5,21 @@
 display.setStatusBar(display.HiddenStatusBar)
 --physics.setDrawMode("hybrid")
 
+
 -- Constantes
 local LARGURA = display.contentWidth
 local ALTURA = display.contentHeight
+
 
 -- Física
 local physics = require('physics')
 physics.start()
 
+
 -- Variaveis composer
 local composer = require("composer")
 local scene = composer.newScene()
+
 
 -- Variaveis
 local TsuruAtual
@@ -38,6 +42,11 @@ local caminhoDiretorioImagens = "resources/images/"
 local cores = {"red", "yellow", "green"}
 local formas = {"shape1", "shape2", "shape3"}
 local grupoImagens
+local contadorTsurus = 0
+local tableTsurus = {}
+local indice = 1
+local trioTsurusAtual = 1
+
 
 -- Funções
 local adicionarOri = {}
@@ -51,8 +60,9 @@ local update = {}
 local selecionarCor = {}
 local selecionarForma= {}
 local embaralhar = {}
+local removerTsurusNaoSelecionados = {}
 
---------------------------------------------------------------------------------
+
 function scene:create(event)
   local sceneGroup = self.view
 
@@ -142,6 +152,7 @@ end
 
 --Add Tsurus
 function adicionarTsurus(event)
+    local tsurus = {}
   --Speed up each 15 tsurus added
     if(event.count % 3 == 0 ) then
     --  aumentarVelocidade()
@@ -160,30 +171,36 @@ function adicionarTsurus(event)
 
     --Add 3 tsurus
     --Add tsuru on top
-    tsuru1 = display.newImage(caminhoDiretorioImagens .. "tsurus/tsuru_".. color1 .. "_" .. shape1 .. ".png")
+    tsuru1 = display.newRect(0,0,80,80)
+    tsuru1.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/tsuru_".. color1 .. "_" .. shape1 .. ".png"}
     tsuru1.x = LARGURA
     tsuru1.y = ALTURA - 250
     tsuru1.color = color1
     tsuru1.shape = shape1
+    tsuru1.id = 1
     physics.addBody(tsuru1, "static")
 
     --Add tsuru in the middle
-    tsuru2 = display.newImage(caminhoDiretorioImagens .. "tsurus/tsuru_".. color2 .. "_" .. shape2 .. ".png")
+    tsuru2 = display.newRect(0,0,80,80)
+    tsuru2.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/tsuru_".. color2 .. "_" .. shape2 .. ".png"}
     tsuru2.x = LARGURA
     tsuru2.y = ALTURA - 150
     tsuru2.color = color2
     tsuru2.shape = shape2
+    tsuru2.id = 2
     physics.addBody(tsuru2, "static")
 
     --Add tsuru at the bottom
-    tsuru3 = display.newImage(caminhoDiretorioImagens .. "tsurus/tsuru_" .. color3 .. "_" .. shape3 .. ".png")
+    tsuru3 = display.newRect(0,0,80,80)
+    tsuru3.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/tsuru_" .. color3 .. "_" .. shape3 .. ".png"}
     tsuru3.x = LARGURA
     tsuru3.y = ALTURA - 50
     tsuru3.color = color3
     tsuru3.shape = shape3
+    tsuru3.id = 3
     physics.addBody(tsuru3, "static")
 
-    --transition tsurrus
+    --transition tsurus
     transition.to(tsuru1, {time = velocidade, x = -150, y = tsuru1.y, tag="all"})
     transition.to(tsuru2, {time = velocidade, x = -150, y = tsuru2.y, tag="all"})
     transition.to(tsuru3, {time = velocidade, x = -150, y = tsuru3.y, tag="all"})
@@ -201,6 +218,12 @@ function adicionarTsurus(event)
     grupoImagens:insert(tsuru2)
     grupoImagens:insert(tsuru3)
 
+    tsurus = {tsuru1, tsuru2, tsuru3}
+
+    tableTsurus[indice] = tsurus
+    indice = indice + 1
+
+    contadorTsurus = contadorTsurus + 3
     --show speed
     --textoDistancia.text = speed
 end
@@ -254,13 +277,13 @@ end
 function aumentarVelocidade()
   velocidade = velocidade - 1000
 
-  --transition.cancel(ori)
+  transition.cancel(ori)
   transition.to(ori, {time = velocidade - 2000, x = -150, y = ori.y , tag="all"})
 end
 
 function update()
   -- utilizar o tamanho da tela do dispositivo LARGURA
-  if(ori.x < -75) then
+  if(ori.x < -75 or contadorTsurus == 1000) then
     --mudar para composer.fimDeJogo()
     fimDeJogo()
   end
@@ -304,6 +327,7 @@ end
 
 --Tsuru is touched
 function selecionarTsuru(self, event)
+
   --Moves Ori to the tsuru touched
   if(event.phase == "began" and self.x > ori.x and self.x < (ori.x + 150)) then
     ori.x = self.x
@@ -311,11 +335,60 @@ function selecionarTsuru(self, event)
 
     transition.to(ori, {time = velocidade, x = -150, y = ori.y, tag="all"})
 
+
     diferenciar(self)
 
     totalTsurusSaltados = totalTsurusSaltados + 1
     aumentarDistancia()
+
+    removerTsurusNaoSelecionados(self.id)
+
+      self.fill = {type="image", filename=caminhoDiretorioImagens .. "tsuru.png"}
   end
+end
+
+-- Remove os tsurus não selecionados do trio de tsurus atual
+function removerTsurusNaoSelecionados(tsuruId)
+  local tsuruNaoSelecionado1
+  local tsuruNaoSelecionado2
+--[[  print("tsuro1 removido")
+  tsuruNaoSelecionado1 = print(table.remove(tableTsurus[trioTsurusAtual],1))
+  print("tssuro2 removido")
+  tsuruNaoSelecionado2 = print(table.remove(tableTsurus[trioTsurusAtual],2))]]
+  if (tsuruId == 1) then
+    tsuruNaoSelecionado2 = table.remove(tableTsurus[trioTsurusAtual],3)
+    tsuruNaoSelecionado2:removeSelf()
+    tsuruNaoSelecionado2 = nil
+
+    tsuruNaoSelecionado1 = table.remove(tableTsurus[trioTsurusAtual],2)
+    tsuruNaoSelecionado1:removeSelf()
+    tsuruNaoSelecionado1 = nil
+
+  elseif (tsuruId == 2) then
+    tsuruNaoSelecionado2 =  table.remove(tableTsurus[trioTsurusAtual],3)
+    tsuruNaoSelecionado2:removeSelf()
+    tsuruNaoSelecionado2 = nil
+
+    tsuruNaoSelecionado1 =  table.remove(tableTsurus[trioTsurusAtual],1)
+    tsuruNaoSelecionado1:removeSelf()
+    tsuruNaoSelecionado1 = nil
+  else
+    tsuruNaoSelecionado2 =  table.remove(tableTsurus[trioTsurusAtual],2)
+    tsuruNaoSelecionado2:removeSelf()
+    tsuruNaoSelecionado2 = nil
+
+    tsuruNaoSelecionado1 =  table.remove(tableTsurus[trioTsurusAtual],1)
+    tsuruNaoSelecionado1:removeSelf()
+    tsuruNaoSelecionado1 = nil
+  end
+
+  trioTsurusAtual =  trioTsurusAtual + 1
+end
+
+-- muda cor e forma do tsuru selecionado para cinza
+function mudarCorEFormaTsuru(self)
+  self:removeSelf()
+
 end
 
 --Tsurus differentiation
