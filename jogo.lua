@@ -25,6 +25,8 @@ local scene = composer.newScene()
 local TsuruAtual
 local etiquetaDiferenciacao
 local textoDiferenciacao
+local textoPontuacao
+local etiquetaPontuacao
 local regraDiferenciacao
 local etiquetaDistancia
 local textoDistancia
@@ -46,8 +48,10 @@ local contadorTsurus = 0
 local tableTsurus = {}
 local indice = 1
 local trioTsurusAtual = 1
-local limiteNivel = 33
+local limiteNivel = 100
 local primeiraEscolha = true
+local ultimoTempo = 4.000
+local tempoAtual
 
 
 -- Funções
@@ -61,6 +65,8 @@ local aumentarVelocidade = {}
 local update = {}
 local embaralhar = {}
 local removerTsurusNaoSelecionados = {}
+local pausar = {}
+local resumir = {}
 
 
 function scene:create(event)
@@ -70,14 +76,21 @@ function scene:create(event)
   -- Ex: adicionar objetos display para "sceneGroup"
 
   -- Exibi a regra de difereciação
-  etiquetaDiferenciacao = display.newText("Diferenciação:", LARGURA - 390, ALTURA - 300, native.systemFontBold, 12)
+  etiquetaDiferenciacao = display.newText("Diferenciação:", LARGURA - 480, ALTURA - 300, native.systemFontBold, 12)
   etiquetaDiferenciacao:setTextColor(68, 68, 68)
 
-  textoDiferenciacao = display.newText("", LARGURA - 280, ALTURA - 300, native.systemFontBold, 12)
+  textoDiferenciacao = display.newText("", LARGURA - 410, ALTURA - 300, native.systemFontBold, 12)
   textoDiferenciacao:setTextColor(68, 68, 68)
 
+  -- Exibi a pontuação
+  etiquetaPontuacao = display.newText("Pontos:", LARGURA - 300, ALTURA - 300, native.systemFontBold, 12)
+  etiquetaPontuacao:setTextColor(68, 68, 68)
+
+  textoPontuacao = display.newText("0", LARGURA - 260, ALTURA - 300, native.systemFontBold, 12)
+  textoPontuacao:setTextColor(68, 68, 68)
+
   -- Exibi a distância percorrida
-  etiquetaDistancia = display.newText("Distância:", LARGURA - 150, ALTURA - 300, native.systemFontBold, 12)
+  etiquetaDistancia = display.newText("Distância:", LARGURA - 100, ALTURA - 300, native.systemFontBold, 12)
   etiquetaDistancia:setTextColor(68, 68, 68)
 
   textoDistancia = display.newText("0 m", LARGURA - 50, ALTURA - 300, native.systemFontBold, 12)
@@ -94,13 +107,16 @@ function scene:show(event)
     -- Chama quando a cena está na tela
     -- Inserir código para fazer que a cena venha "viva"
     -- Ex: start times, begin animation, play audio, etc
+    pontuacao = 0
+
     grupoImagens = display.newGroup()
+
+    -- Adicionar tsurus
+    tsuruTimer = timer.performWithDelay(3000, adicionarTsurus, 0 )
 
     -- Adicionar Ori
     adicionarOri()
 
-    -- Adicionar tsurus
-    tsuruTimer = timer.performWithDelay(3000, adicionarTsurus, 0 )
 
     -- Atualizar cena
     Runtime:addEventListener('enterFrame', update)
@@ -152,9 +168,8 @@ end
 function adicionarTsurus(event)
     local tsurus = {}
   --Speed up each 15 tsurus added
-  print("contador = " .. event.count)
     if(contadorTsurus == limiteNivel) then
-      limiteNivel = limiteNivel + 33
+      limiteNivel = limiteNivel + 100
       aumentarVelocidade()
     end
 
@@ -201,7 +216,7 @@ function adicionarTsurus(event)
     physics.addBody(tsuru3, "kinematic")
 
     --transição tsurus
-    transition.to(tsuru1, {time = velocidade, x = -150, y = tsuru1.y, tag="all"})
+    transition.to(tsuru1, {time = velocidade, x =  -150, y = tsuru1.y, tag="all"})
     transition.to(tsuru2, {time = velocidade, x = -150, y = tsuru2.y, tag="all"})
     transition.to(tsuru3, {time = velocidade, x = -150, y = tsuru3.y, tag="all"})
 
@@ -247,7 +262,6 @@ end
 
 -- Tsuru é tocado
 function selecionarTsuru(self, event)
-
   -- Move Ori para o tsuru tocado
   if(event.phase == "began" and ((primeiraEscolha) or (self.x > ori.x and self.x < (ori.x + 250)))) then
     primeiraEscolha = false
@@ -256,6 +270,7 @@ function selecionarTsuru(self, event)
     ori.x = self.x
     ori.y = self.y - 25
 
+    transition.cancel(ori)
     transition.to(ori, {time = velocidade, x = -150, y = ori.y, tag="all"})
 
     diferenciar(self)
@@ -266,7 +281,9 @@ function selecionarTsuru(self, event)
 
     removerTsurusNaoSelecionados(self.id)
 
-    -- self.fill = {type="image", filename=caminhoDiretorioImagens .. "tsuru.png"}
+    self.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/tsuru_neutro.png"}
+
+    ganharPonto(event)
   end
 end
 
@@ -354,11 +371,37 @@ end
 
 function update()
   -- utilizar o tamanho da tela do dispositivo LARGURA
-  if(ori.x < LARGURA - 700 or contadorTsurus == 1000) then
+  if(ori.x < LARGURA - 600 or contadorTsurus == 1000) then
     fimDeJogo()
   end
 end
 
+function ganharPonto(event)
+  tempoAtual = event.time/1000
+  local diferencaTempo = tempoAtual - ultimoTempo
+
+  if(diferencaTempo < 1.000) then
+    pontuacao = pontuacao + 90
+  elseif(diferencaTempo > 1.000 and diferencaTempo < 2.000) then
+      pontuacao = pontuacao + 70
+  elseif(diferencaTempo > 2.000 and diferencaTempo < 3.000) then
+    pontuacao = pontuacao + 50
+  elseif(diferencaTempo > 3.000  and diferencaTempo < 4.000) then
+    pontuacao = pontuacao + 30
+  else
+    pontuacao = pontuacao + 10
+  end
+
+  print("ultimo tempo = " .. ultimoTempo)
+  print("tempo atual = " .. tempoAtual)
+  print("diferencaTempo = " .. diferencaTempo)
+  print("pontos = " .. pontuacao)
+  print(".....................................")
+  print(" ")
+
+  textoPontuacao.text = string.format("%d", pontuacao)
+  ultimoTempo = tempoAtual
+end
 
 -- Configuração de transição entre cenas
 local transicaofimDeJogoConfig = {
@@ -386,6 +429,18 @@ function scene:destroy(event)
   display.remove(etiquetaDiferenciacao)
   display.remove(textoDistancia)
   display.remove(etiquetaDistancia)
+  display.remove(textoPontuacao)
+  display.remove(etiquetaPontuacao)
+end
+
+function pausar()
+  timer.pause(tsuruTimer)
+  transition.pause("all")
+end
+
+function resumir()
+  timer.resumo(tsuruTimer)
+  transition.resume("all")
 end
 
 

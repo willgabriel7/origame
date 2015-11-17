@@ -11,6 +11,8 @@ local fimDeJogoTxt
 local btnJogarNovamente
 local btnIrParaMenu
 local distanciaPercorridaTxt
+local totalPontosTxt
+local totalTsurusSaltadosTxt
 local resultadoTxt
 local adicionarresultado = {}
 local carregarFimDeJogo = {}
@@ -96,11 +98,16 @@ function carregarFimDeJogo( )
   btnIrParaMenu.y = display.contentCenterY + 80
   scene.view:insert(btnIrParaMenu)
 
-  distanciaPercorridaTxt = display.newText('Distância Percorrida: ' .. distancia .. "m", display.contentCenterX, display.contentCenterY - 20, native.systemFontBold, 20)
-  scene.view:insert(distanciaPercorridaTxt)
+  totalPontosTxt = display.newText('Total de ponto: ' .. pontuacao, display.contentCenterX, display.contentCenterY  - 30, native.systemFontBold, 20)
+  scene.view:insert(totalPontosTxt)
 
   totalTsurusSaltadosTxt = display.newText('Tsurus Saltados: ' .. totalTsurusSaltados, display.contentCenterX, display.contentCenterY, native.systemFontBold, 20)
   scene.view:insert(totalTsurusSaltadosTxt)
+
+  distanciaPercorridaTxt = display.newText('Distância Percorrida: ' .. distancia .. "m", display.contentCenterX, display.contentCenterY + 30 , native.systemFontBold, 20)
+  scene.view:insert(distanciaPercorridaTxt)
+
+
 end
 
 
