@@ -7,10 +7,10 @@ display.setStatusBar(display.HiddenStatusBar)
 
 
 -- Constantes
-local LARGURA = display.contentWidth
-local ALTURA = display.contentHeight
-
-
+local LARGURA_TELA = display.contentWidth
+local ALTURA_TELA = display.contentHeight
+local CENTRO_X = display.contentCenterX
+local CENTRO_Y = display.contentCenterY
 -- Física
 local physics = require('physics')
 physics.start()
@@ -52,7 +52,11 @@ local limiteNivel = 100
 local primeiraEscolha = true
 local ultimoTempo = 4.000
 local tempoAtual
-
+local fundo
+local montanhasFundo
+local montanhasFrente
+local caminhoDiretorioEstilo = "resources/estilo/"
+local velocidadeMontanhas
 
 -- Funções
 local adicionarOri = {}
@@ -67,6 +71,8 @@ local embaralhar = {}
 local removerTsurusNaoSelecionados = {}
 local pausar = {}
 local resumir = {}
+local montarCenario = {}
+local scrollingMontanhas = {}
 
 
 function scene:create(event)
@@ -75,25 +81,18 @@ function scene:create(event)
   -- Inicia a cena aqui
   -- Ex: adicionar objetos display para "sceneGroup"
 
+  -- monta cenario
+  montarCenario()
   -- Exibi a regra de difereciação
-  etiquetaDiferenciacao = display.newText("Diferenciação:", LARGURA - 480, ALTURA - 300, native.systemFontBold, 12)
-  etiquetaDiferenciacao:setTextColor(68, 68, 68)
-
-  textoDiferenciacao = display.newText("", LARGURA - 410, ALTURA - 300, native.systemFontBold, 12)
+  textoDiferenciacao = display.newText("", LARGURA_TELA - 500, ALTURA_TELA - 300, "Origram", 16)
   textoDiferenciacao:setTextColor(68, 68, 68)
 
   -- Exibi a pontuação
-  etiquetaPontuacao = display.newText("Pontos:", LARGURA - 300, ALTURA - 300, native.systemFontBold, 12)
-  etiquetaPontuacao:setTextColor(68, 68, 68)
-
-  textoPontuacao = display.newText("0", LARGURA - 260, ALTURA - 300, native.systemFontBold, 12)
+  textoPontuacao = display.newText("0", LARGURA_TELA - 290, ALTURA_TELA - 300, "Origram", 16)
   textoPontuacao:setTextColor(68, 68, 68)
 
   -- Exibi a distância percorrida
-  etiquetaDistancia = display.newText("Distância:", LARGURA - 100, ALTURA - 300, native.systemFontBold, 12)
-  etiquetaDistancia:setTextColor(68, 68, 68)
-
-  textoDistancia = display.newText("0 m", LARGURA - 50, ALTURA - 300, native.systemFontBold, 12)
+  textoDistancia = display.newText("0 m", LARGURA_TELA - 70, ALTURA_TELA - 300, "Origram", 16)
   textoDistancia:setTextColor(68, 68, 68)
 end
 
@@ -120,7 +119,7 @@ function scene:show(event)
 
     -- Atualizar cena
     Runtime:addEventListener('enterFrame', update)
-
+  --  Runtime:addEventListener("enterFrame", scrollingMontanhas)
 
   end
 end
@@ -138,12 +137,42 @@ function scene:hide(event)
   end
 end
 
+function montarCenario()
+  fundo = display.newImageRect(caminhoDiretorioEstilo .. "fundo.png", LARGURA_TELA, ALTURA_TELA)
+  fundo.x = CENTRO_X
+  fundo.y = CENTRO_Y
+  scene.view:insert(fundo)
+
+  montanhasFundo = display.newImageRect(caminhoDiretorioEstilo .. "montanhas-fundo.png", LARGURA_TELA, ALTURA_TELA)
+  montanhasFundo.x = CENTRO_X
+  montanhasFundo.y = CENTRO_Y
+  scene.view:insert(montanhasFundo)
+
+  montanhasFrente = display.newImageRect(caminhoDiretorioEstilo .. "montanhas-frente.png", LARGURA_TELA, ALTURA_TELA)
+  montanhasFrente.x = CENTRO_X
+  montanhasFrente.y = CENTRO_Y
+  scene.view:insert(montanhasFrente)
+end
+
+function scrollingMontanhas(event)
+  montanhasFundo.x = montanhasFundo.x - 0.5
+  montanhasFrente.x = montanhasFrente.x - 1
+
+  if (montanhasFundo.x + montanhasFundo.contentWidth) < 0 then
+    montanhasFundo:translate(LARGURA_TELA * 3, 0)
+  end
+
+  if (montanhasFrente.x + montanhasFrente.contentWidth) < 0 then
+    montanhasFrente:translate(LARGURA_TELA * 3, 0)
+  end
+end
+
 
 -- Adiciona Ori
 function adicionarOri()
   tsuru = display.newImage(caminhoDiretorioImagens .. "tsuru.png")
-  tsuru.x = LARGURA - 500
-  tsuru.y = ALTURA - 150
+  tsuru.x = LARGURA_TELA - 500
+  tsuru.y = ALTURA_TELA - 150
   tsuru.color = ""
   tsuru.shape = ""
   physics.addBody(tsuru, "kinematic")
@@ -188,8 +217,8 @@ function adicionarTsurus(event)
     --Adiciona tsuru no topo
     tsuru1 = display.newRect(0,0,80,80)
     tsuru1.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/tsuru_".. color1 .. "_" .. shape1 .. ".png"}
-    tsuru1.x = LARGURA
-    tsuru1.y = ALTURA - 250
+    tsuru1.x = LARGURA_TELA
+    tsuru1.y = ALTURA_TELA - 250
     tsuru1.color = color1
     tsuru1.shape = shape1
     tsuru1.id = 1
@@ -198,8 +227,8 @@ function adicionarTsurus(event)
     --Adiciona tsuru no meio
     tsuru2 = display.newRect(0,0,80,80)
     tsuru2.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/tsuru_".. color2 .. "_" .. shape2 .. ".png"}
-    tsuru2.x = LARGURA
-    tsuru2.y = ALTURA - 150
+    tsuru2.x = LARGURA_TELA
+    tsuru2.y = ALTURA_TELA - 150
     tsuru2.color = color2
     tsuru2.shape = shape2
     tsuru2.id = 2
@@ -208,8 +237,8 @@ function adicionarTsurus(event)
     --Adiona tsuru ao fundo
     tsuru3 = display.newRect(0,0,80,80)
     tsuru3.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/tsuru_" .. color3 .. "_" .. shape3 .. ".png"}
-    tsuru3.x = LARGURA
-    tsuru3.y = ALTURA - 50
+    tsuru3.x = LARGURA_TELA
+    tsuru3.y = ALTURA_TELA - 50
     tsuru3.color = color3
     tsuru3.shape = shape3
     tsuru3.id = 3
@@ -370,8 +399,8 @@ function aumentarVelocidade()
 end
 
 function update()
-  -- utilizar o tamanho da tela do dispositivo LARGURA
-  if(ori.x < LARGURA - 600 or contadorTsurus == 1000) then
+  -- utilizar o tamanho da tela do dispositivo LARGURA_TELA
+  if(ori.x < LARGURA_TELA - 600 or contadorTsurus == 1000) then
     fimDeJogo()
   end
 end
@@ -421,6 +450,7 @@ function scene:destroy(event)
   transition.cancel("all")
   timer.cancel(tsuruTimer)
   Runtime:removeEventListener("enterFrame", update)
+   Runtime:removeEventListener("enterFrame", scrollingMontanhas)
   Runtime:removeEventListener("touch", tsuru1)
   Runtime:removeEventListener("touch", tsuru2)
   Runtime:removeEventListener("touch", tsuru3)

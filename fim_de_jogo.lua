@@ -25,7 +25,7 @@ function scene:create(event)
   local sceneGroup = self.view
   carregarFimDeJogo()
 
-  resultadoTxt = display.newText('FIM DE JOGO ', display.contentCenterX, display.contentCenterY - 90, native.systemFontBold, 20)
+  resultadoTxt = display.newText('FIM DE JOGO!', display.contentCenterX, display.contentCenterY - 90, "Origram", 20)
   scene.view:insert(resultadoTxt)
 end
 
@@ -98,13 +98,13 @@ function carregarFimDeJogo( )
   btnIrParaMenu.y = display.contentCenterY + 80
   scene.view:insert(btnIrParaMenu)
 
-  totalPontosTxt = display.newText('Total de ponto: ' .. pontuacao, display.contentCenterX, display.contentCenterY  - 30, native.systemFontBold, 20)
+  totalPontosTxt = display.newText('Pontuação Final: ' .. pontuacao, display.contentCenterX, display.contentCenterY  - 30, "Origram", 20)
   scene.view:insert(totalPontosTxt)
 
-  totalTsurusSaltadosTxt = display.newText('Tsurus Saltados: ' .. totalTsurusSaltados, display.contentCenterX, display.contentCenterY, native.systemFontBold, 20)
+  totalTsurusSaltadosTxt = display.newText('Tsurus Saltados: ' .. totalTsurusSaltados, display.contentCenterX, display.contentCenterY, "Origram", 20)
   scene.view:insert(totalTsurusSaltadosTxt)
 
-  distanciaPercorridaTxt = display.newText('Distância Percorrida: ' .. distancia .. "m", display.contentCenterX, display.contentCenterY + 30 , native.systemFontBold, 20)
+  distanciaPercorridaTxt = display.newText('Distância Percorrida: ' .. distancia .. "m", display.contentCenterX, display.contentCenterY + 30 , "Origram", 20)
   scene.view:insert(distanciaPercorridaTxt)
 
 
