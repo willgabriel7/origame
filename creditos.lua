@@ -72,13 +72,13 @@ function carregarCreditos( )
   background.y = display.contentCenterY
   scene.view:insert(background)
 
-  creditosTxt = display.newText("CRÉDITOS", display.contentCenterX, display.contentCenterY - 90, "Origram", 20)
+  creditosTxt = display.newText("CREDITOS", display.contentCenterX, display.contentCenterY - 90, "Origram", 20)
   scene.view:insert(creditosTxt)
 
   creditosTxt = display.newText("Desenvolvido por:", display.contentCenterX, display.contentCenterY - 30, "Origram", 15)
   scene.view:insert(creditosTxt)
 
-  creditosTxt = display.newText("Gabriel Araújo", display.contentCenterX, display.contentCenterY, "Origram", 20)
+  creditosTxt = display.newText("Gabriel Araújo", display.contentCenterX, display.contentCenterY, "Origram", 40)
   scene.view:insert(creditosTxt)
 
   btnVoltar = display.newImage(caminhoDiretorioImagens .. "voltar.png")

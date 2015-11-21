@@ -63,7 +63,7 @@ end
 function scene:destroy(event)
   local sceneGroup = self.view
 
-  display.remove(background)
+--  display.remove(background)
   if (cce) then
     timer.cancel(cce)
     cce = nil
@@ -83,7 +83,7 @@ end
 
 -- Carregar imagens contidas no menu
 function carregarFimDeJogo( )
-  background = display.newImageRect(caminhoDiretorioImagens .. "fundo.png", display.contentWidth, display.contentHeight)
+--[[  background = display.newImageRect(caminhoDiretorioImagens .. "fundo.png", display.contentWidth, display.contentHeight)
   background.x = display.contentCenterX
   background.y = display.contentCenterY
   scene.view:insert(background)
@@ -96,7 +96,7 @@ function carregarFimDeJogo( )
   btnIrParaMenu = display.newImage(caminhoDiretorioImagens .. "menu.png")
   btnIrParaMenu.x = display.contentCenterX + 70
   btnIrParaMenu.y = display.contentCenterY + 80
-  scene.view:insert(btnIrParaMenu)
+  scene.view:insert(btnIrParaMenu)]]
 
   totalPontosTxt = display.newText('Pontuação Final: ' .. pontuacao, display.contentCenterX, display.contentCenterY  - 30, "Origram", 20)
   scene.view:insert(totalPontosTxt)
