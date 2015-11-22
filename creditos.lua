@@ -6,14 +6,11 @@ physics.start()
 
 
 -- Declarar/Inicializar variáveis/funções
-local caminhoDiretorioImagens = "resources/estilo/preto/"
-local cce
-local cce2
+local caminhoDiretorioEstilo = "resources/estilo/"
+local fundo
 local btRetornarMenu
 local creditosTxt
 local carregarCreditos = {}
-local criarGrupos = {}
-local retornarSubMenu = {}
 
 
 -- Inicia a cena aqui
@@ -54,7 +51,7 @@ end
 -- Scene:destroy
 function scene:destroy(event)
   local sceneGroup = self.view
-  display.remove(background)
+  display.remove(fundo)
 end
 
 
@@ -67,23 +64,42 @@ end
 
 -- Carregar imagens contidas no menu
 function carregarCreditos( )
-  background = display.newImageRect(caminhoDiretorioImagens .. "fundo.png", display.contentWidth, display.contentHeight)
-  background.x = display.contentCenterX
-  background.y = display.contentCenterY
-  scene.view:insert(background)
+  fundo = display.newImageRect(caminhoDiretorioEstilo .. "fundo-telas.png", display.contentWidth, display.contentHeight)
+  fundo.x = display.contentCenterX
+  fundo.y = display.contentCenterY
+  scene.view:insert(fundo)
 
-  creditosTxt = display.newText("CREDITOS", display.contentCenterX, display.contentCenterY - 90, "Origram", 20)
+  creditosTxt = display.newText("créditos", display.contentCenterX, display.contentCenterY - 150, "Origram", 40)
   scene.view:insert(creditosTxt)
 
-  creditosTxt = display.newText("Desenvolvido por:", display.contentCenterX, display.contentCenterY - 30, "Origram", 15)
+  creditosTxt = display.newText("Desenvolvido por:", display.contentCenterX, display.contentCenterY - 100, "Origram", 18)
+  scene.view:insert(creditosTxt)
+  creditosTxt = display.newText("Gabriel Araújo", display.contentCenterX, display.contentCenterY - 80, "Origram", 16)
+  scene.view:insert(creditosTxt)
+  creditosTxt = display.newText("github.com/willgabriel7", display.contentCenterX, display.contentCenterY - 60, "Origram", 14)
+  scene.view:insert(creditosTxt)
+  creditosTxt = display.newText("gabriel.araujows@gmail.com", display.contentCenterX, display.contentCenterY - 40, "Origram", 14)
   scene.view:insert(creditosTxt)
 
-  creditosTxt = display.newText("Gabriel Araújo", display.contentCenterX, display.contentCenterY, "Origram", 40)
+  creditosTxt = display.newText("Design:", display.contentCenterX, display.contentCenterY - 10, "Origram", 18)
+  scene.view:insert(creditosTxt)
+  creditosTxt = display.newText("Gabriel Araújo", display.contentCenterX, display.contentCenterY + 10, "Origram", 16)
   scene.view:insert(creditosTxt)
 
-  btnVoltar = display.newImage(caminhoDiretorioImagens .. "voltar.png")
+  creditosTxt = display.newText("Som:", display.contentCenterX, display.contentCenterY + 40, "Origram", 18)
+  scene.view:insert(creditosTxt)
+  creditosTxt = display.newText("som.com", display.contentCenterX, display.contentCenterY + 60, "Origram", 16)
+  scene.view:insert(creditosTxt)
+
+  creditosTxt = display.newText("Fonte de Pesquisa:", display.contentCenterX, display.contentCenterY + 90, "Origram", 18)
+  scene.view:insert(creditosTxt)
+  creditosTxt = display.newText("Corona Labs - coronalabs.com", display.contentCenterX, display.contentCenterY +  110, "Origram", 16)
+  scene.view:insert(creditosTxt)
+
+
+  btnVoltar = display.newImageRect(caminhoDiretorioEstilo .. "botao-voltar.png", 60, 60)
   btnVoltar.x = display.contentCenterX
-  btnVoltar.y = display.contentCenterY + 80
+  btnVoltar.y = display.contentCenterY + 170
   scene.view:insert(btnVoltar)
 end
 
@@ -97,7 +113,7 @@ local transicaoSubMenuConfig = {
 -- Função que chama cena para retorno ao jogo
 function voltarMenu( )
   composer.removeScene("creditos")
-	composer.gotoScene("menu", transicaoSubMenuConfig)
+	composer.gotoScene("jogo", transicaoSubMenuConfig)
 end
 
 

@@ -3,7 +3,7 @@
 
 -- Esconde a barra de status
 display.setStatusBar(display.HiddenStatusBar)
-physics.setDrawMode("hybrid")
+--physics.setDrawMode("hybrid")
 
 
 -- Constantes
@@ -105,21 +105,9 @@ function scene:show(event)
   if (phase == "will") then
     -- Chama quando a cena está fora da cena
   elseif (phase == "did") then
-  --  btnJogar:addEventListener("touch", jogar)
+    btnJogar:addEventListener("touch", jogar)
     btnCreditos:addEventListener("touch", creditos)
     btnSair:addEventListener("touch", fecharApp)
-
-    pontuacao = 0
-
-    -- Adicionar tsurus
-  --  tsuruTimer = timer.performWithDelay(3000, adicionarTsurus, 0 )
-
-    -- Adicionar Ori
-  --  adicionarOri()
-
-    -- Atualizar cena
-  --  Runtime:addEventListener('enterFrame', update)
-  --  Runtime:addEventListener("enterFrame", scrollingMontanhas)
   end
 end
 
@@ -134,6 +122,45 @@ function scene:hide(event)
   elseif (phase == "did") then
     -- Chama imediatamente quando a cena está fora da tela
   end
+end
+
+function jogar()
+  --scene.view:remove(barreira)
+  scene.view:remove(btnJogar)
+  scene.view:remove(btnSair)
+  scene.view:remove(btnCreditos)
+  scene.view:remove(btnTutorial)
+
+
+  pontuacao = 0
+
+  --transição tsurus
+  transition.to(tsuru1, {time = velocidade, x = -150, y = tsuru1.y, tag="transicao"})
+  transition.to(tsuru2, {time = velocidade, x = -150, y = tsuru2.y, tag="transicao"})
+  transition.to(tsuru3, {time = velocidade, x = -150, y = tsuru3.y, tag="transicao"})
+
+  --Adiciona manipulador ao toque
+  tsuru1.touch = selecionarTsuru
+  tsuru2.touch = selecionarTsuru
+  tsuru3.touch = selecionarTsuru
+
+  tsuru1:addEventListener("touch", tsuru1)
+  tsuru2:addEventListener("touch", tsuru2)
+  tsuru3:addEventListener("touch", tsuru3)
+
+  -- Adicionar tsurus
+  -- tsuruTimer = timer.performWithDelay(3000, adicionarTsurus, 0 )
+
+  -- Adicionar Ori
+  -- adicionarOri()
+
+  -- Atualizar cena
+  -- Runtime:addEventListener('enterFrame', update)
+  -- Runtime:addEventListener("enterFrame", scrollingMontanhas)
+end
+
+function tsurusIniciais()
+
 end
 
 function montarCenario()
@@ -168,13 +195,14 @@ function montarCenario()
   ori.name = "ori"
   ori.isFixedRotation = true
   physics.addBody(ori, "kinematic")
+  scene.view:insert(ori)
   --grupoImagens:insert(ori)
 
 
-  --[[barreira = display.newRect(CENTRO_X - 230, CENTRO_Y - 52, 50, ALTURA_TELA)
-  barreira:setFillColor( 0, 0.5)
+--[[barreira = display.newRect(CENTRO_X, CENTRO_Y, LARGURA_TELA, ALTURA_TELA)
+  barreira:setFillColor(0, 0.5)
   barreira:setStrokeColor( 1, 0, 0 )
-  physics.addBody(barreira, "dynamic")]]
+  scene.view:insert(barreira)]]
 
   carregarMenu()
 end
@@ -309,6 +337,15 @@ function adicionarTsurus(transicao)
       transition.to(tsuru1, {time = velocidade, x = -150, y = tsuru1.y, tag="transicao"})
       transition.to(tsuru2, {time = velocidade, x = -150, y = tsuru2.y, tag="transicao"})
       transition.to(tsuru3, {time = velocidade, x = -150, y = tsuru3.y, tag="transicao"})
+
+      --Adiciona manipulador ao toque
+      tsuru1.touch = selecionarTsuru
+      tsuru2.touch = selecionarTsuru
+      tsuru3.touch = selecionarTsuru
+
+      tsuru1:addEventListener("touch", tsuru1)
+      tsuru2:addEventListener("touch", tsuru2)
+      tsuru3:addEventListener("touch", tsuru3)
     else
       tsuru1.x = CENTRO_X + 100
       tsuru1.y = CENTRO_Y - 20
@@ -319,15 +356,6 @@ function adicionarTsurus(transicao)
       tsuru3.x = CENTRO_X + 200
       tsuru3.y = CENTRO_Y + 40
     end
-
-    --Adiciona manipulador ao toque
-    tsuru1.touch = selecionarTsuru
-    tsuru2.touch = selecionarTsuru
-    tsuru3.touch = selecionarTsuru
-
-    tsuru1:addEventListener("touch", tsuru1)
-    tsuru2:addEventListener("touch", tsuru2)
-    tsuru3:addEventListener("touch", tsuru3)
 
     if(tsuruIncio == nil) then
       tsuruIncio = tsuru3
@@ -530,13 +558,13 @@ end
 function scene:destroy(event)
   local sceneGroup = self.view
 
-  transition.cancel("transicao")
-  timer.cancel(tsuruTimer)
-  Runtime:removeEventListener("enterFrame", update)
+--  transition.cancel("transicao")
+  --timer.cancel(tsuruTimer)
+  --Runtime:removeEventListener("enterFrame", update)
 --   Runtime:removeEventListener("enterFrame", scrollingMontanhas)
-  Runtime:removeEventListener("touch", tsuru1)
-  Runtime:removeEventListener("touch", tsuru2)
-  Runtime:removeEventListener("touch", tsuru3)
+--  Runtime:removeEventListener("touch", tsuru1)
+  --Runtime:removeEventListener("touch", tsuru2)
+--  Runtime:removeEventListener("touch", tsuru3)
   display.remove(grupoImagens)
   display.remove(textoDiferenciacao)
   display.remove(etiquetaDiferenciacao)
