@@ -6,7 +6,7 @@ physics.start()
 
 
 -- Declarar/Inicializar variáveis/funções
-local caminhoDiretorioImagens = "resources/estilo/preto/"
+local caminhoDiretorioEstilo = "resources/estilo/"
 local fimDeJogoTxt
 local btnJogarNovamente
 local btnIrParaMenu
@@ -24,9 +24,6 @@ local irParaMenu = {}
 function scene:create(event)
   local sceneGroup = self.view
   carregarFimDeJogo()
-
-  resultadoTxt = display.newText('FIM DE JOGO!', display.contentCenterX, display.contentCenterY - 90, "Origram", 20)
-  scene.view:insert(resultadoTxt)
 end
 
 
@@ -62,76 +59,63 @@ end
 -- Scene:destroy
 function scene:destroy(event)
   local sceneGroup = self.view
-
---  display.remove(background)
-  if (cce) then
-    timer.cancel(cce)
-    cce = nil
-  end
-  if (cce2) then
-    timer.cancel(cce2)
-    cce2 = nil
-  end
 end
 
-
--- Cria grupo(s) para unir elementos da tela
-function criarGrupos( )
-  grupoGameOver = display.newGroup( )
-  scene.view:insert(grupoGameOver)
-end
 
 -- Carregar imagens contidas no menu
 function carregarFimDeJogo( )
---[[  background = display.newImageRect(caminhoDiretorioImagens .. "fundo.png", display.contentWidth, display.contentHeight)
-  background.x = display.contentCenterX
-  background.y = display.contentCenterY
-  scene.view:insert(background)
+  fundo = display.newImageRect(caminhoDiretorioEstilo .. "fundo-telas.png", display.contentWidth, display.contentHeight)
+  fundo.x = display.contentCenterX
+  fundo.y = display.contentCenterY
+  scene.view:insert(fundo)
 
-  btnJogarNovamente = display.newImage(caminhoDiretorioImagens .. "nova_chance.png")
+  btnJogarNovamente = display.newImageRect(caminhoDiretorioEstilo .. "botao-jogar-novamente.png", 60, 60)
   btnJogarNovamente.x = display.contentCenterX - 70
-  btnJogarNovamente.y = display.contentCenterY + 80
+  btnJogarNovamente.y = display.contentCenterY + 170
   scene.view:insert(btnJogarNovamente)
 
-  btnIrParaMenu = display.newImage(caminhoDiretorioImagens .. "menu.png")
+  btnIrParaMenu = display.newImageRect(caminhoDiretorioEstilo .. "botao-menu.png", 60, 60)
   btnIrParaMenu.x = display.contentCenterX + 70
-  btnIrParaMenu.y = display.contentCenterY + 80
-  scene.view:insert(btnIrParaMenu)]]
+  btnIrParaMenu.y = display.contentCenterY + 170
+  scene.view:insert(btnIrParaMenu)
 
-  totalPontosTxt = display.newText('Pontuação Final: ' .. pontuacao, display.contentCenterX, display.contentCenterY  - 30, "Origram", 20)
+  resultadoTxt = display.newText('fim de jogo!', display.contentCenterX, display.contentCenterY - 150, "Origram", 40)
+  scene.view:insert(resultadoTxt)
+
+  totalPontosTxt = display.newText("Pontuação Final:  " .. pontuacao , display.contentCenterX, display.contentCenterY - 40, "Origram", 25)
   scene.view:insert(totalPontosTxt)
 
-  totalTsurusSaltadosTxt = display.newText('Tsurus Saltados: ' .. totalTsurusSaltados, display.contentCenterX, display.contentCenterY, "Origram", 20)
+  totalTsurusSaltadosTxt = display.newText("Tsurus Saltados:  " .. totalTsurusSaltados, display.contentCenterX, display.contentCenterY, "Origram", 25)
   scene.view:insert(totalTsurusSaltadosTxt)
 
-  distanciaPercorridaTxt = display.newText('Distância Percorrida: ' .. distancia .. "m", display.contentCenterX, display.contentCenterY + 30 , "Origram", 20)
+  distanciaPercorridaTxt = display.newText("Distância Percorrida: " .. distancia, display.contentCenterX, display.contentCenterY + 40 , "Origram", 25)
   scene.view:insert(distanciaPercorridaTxt)
-
-
 end
 
 
 -- Configuração de transição entre cenas
-local configTransicaoJogoSubMenu = {
-	effect = "fade", time = 400
+local transicaoJogarNovamenteConfig = {
+	effect = "fade", time = 400,  params = { jogarNovamente = true }
 }
 
 
 -- Função que chama cena para retorno ao jogo
-function jogarNovamente( )
+function jogarNovamente()
   composer.removeScene("fim_de_jogo")
-	composer.gotoScene("jogo", configTransicaoJogoSubMenu)
-  distancia = 0
-  totalTsurusSaltados = 0
+	composer.gotoScene("jogo", transicaoJogarNovamenteConfigs)
+--  distancia = 0
+--  totalTsurusSaltados = 0
+  jogarNovamente = true
 end
 
 
 -- Função que chama cena para retorno ao jogo
-function irParaMenu( )
+function irParaMenu()
   composer.removeScene("fim_de_jogo")
-	composer.gotoScene("menu", configTransicaoJogoSubMenu)
-  distancia = 0
-  totalTsurusSaltados = 0
+  jogarNovamente = false
+	composer.gotoScene("jogo", transicaoJogarNovamenteConfig)
+--  distancia = 0
+--  totalTsurusSaltados = 0
 end
 
 

@@ -25,7 +25,7 @@ function scene:show(event)
   local sceneGroup = self.view
   local phase = event.phase
 
-  composer.removeScene("menu")
+  composer.removeScene("jogo")
 
   if (phase == "will") then
     -- Chama quando a cena está fora da tela
@@ -86,15 +86,15 @@ function carregarCreditos( )
   creditosTxt = display.newText("Gabriel Araújo", display.contentCenterX, display.contentCenterY + 10, "Origram", 16)
   scene.view:insert(creditosTxt)
 
-  creditosTxt = display.newText("Som:", display.contentCenterX, display.contentCenterY + 40, "Origram", 18)
+  creditosTxt = display.newText("Recursos Externos:", display.contentCenterX, display.contentCenterY + 40, "Origram", 18)
   scene.view:insert(creditosTxt)
-  creditosTxt = display.newText("som.com", display.contentCenterX, display.contentCenterY + 60, "Origram", 16)
+  creditosTxt = display.newText("Corona Labs - coronalabs.com", display.contentCenterX, display.contentCenterY + 60, "Origram", 16)
   scene.view:insert(creditosTxt)
 
-  creditosTxt = display.newText("Fonte de Pesquisa:", display.contentCenterX, display.contentCenterY + 90, "Origram", 18)
+--[[  creditosTxt = display.newText("Fonte de Pesquisa:", display.contentCenterX, display.contentCenterY + 90, "Origram", 18)
   scene.view:insert(creditosTxt)
   creditosTxt = display.newText("Corona Labs - coronalabs.com", display.contentCenterX, display.contentCenterY +  110, "Origram", 16)
-  scene.view:insert(creditosTxt)
+  scene.view:insert(creditosTxt)]]
 
 
   btnVoltar = display.newImageRect(caminhoDiretorioEstilo .. "botao-voltar.png", 60, 60)

@@ -58,7 +58,7 @@ end
 -- Chamado quando cena atual é removida
 function scene:destroy(event)
   local sceneGroup = self.view
-  display.remove(background)
+  display.remove(fundo)
 end
 
 

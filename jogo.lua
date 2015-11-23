@@ -12,6 +12,7 @@ local ALTURA_TELA = display.contentHeight
 local CENTRO_X = display.contentCenterX
 local CENTRO_Y = display.contentCenterY
 
+
 -- Física
 local physics = require('physics')
 physics.start()
@@ -35,7 +36,7 @@ local ultimaCorSelecionada
 local ultimaFormaSelecionada
 local velocidadeMovimento = 2
 local ori
-local velocidade = 10000
+local velocidade = .1
 local tsuru
 local tsuruTimer
 local tsuru1
@@ -59,12 +60,16 @@ local montanhasFrente
 local caminhoDiretorioEstilo = "resources/estilo/"
 local velocidadeMontanhas
 local barreira
-local inicio = true
-local tsuruIncio = nil
+local tsuruInicio = nil
 local iconeDiferenciacao
 local btnJogar
 local btnCreditos
 local btnSair
+local btnComoJogar
+local destroi = false
+local titulo1
+local titulo2
+local frequencia = 1000
 
 -- Funções
 local adicionarOri = {}
@@ -86,7 +91,10 @@ local jogar = {}
 local creditos = {}
 local carregarMenu = {}
 local fecharApp = {}
+local montarCenario = {}
+local jogar = {}
 
+local transicao = false
 
 function scene:create(event)
   local sceneGroup = self.view
@@ -96,6 +104,7 @@ function scene:create(event)
 
   -- monta cenario
   montarCenario()
+
 end
 
 function scene:show(event)
@@ -108,6 +117,11 @@ function scene:show(event)
     btnJogar:addEventListener("touch", jogar)
     btnCreditos:addEventListener("touch", creditos)
     btnSair:addEventListener("touch", fecharApp)
+    btnComoJogar:addEventListener("touch", comoJogar)
+
+    if(jogarNovamente == true) then
+      jogar()
+    end
   end
 end
 
@@ -124,52 +138,20 @@ function scene:hide(event)
   end
 end
 
-function jogar()
-  --scene.view:remove(barreira)
-  scene.view:remove(btnJogar)
-  scene.view:remove(btnSair)
-  scene.view:remove(btnCreditos)
-  scene.view:remove(btnTutorial)
-
-
-  pontuacao = 0
-
-  --transição tsurus
-  transition.to(tsuru1, {time = velocidade, x = -150, y = tsuru1.y, tag="transicao"})
-  transition.to(tsuru2, {time = velocidade, x = -150, y = tsuru2.y, tag="transicao"})
-  transition.to(tsuru3, {time = velocidade, x = -150, y = tsuru3.y, tag="transicao"})
-
-  --Adiciona manipulador ao toque
-  tsuru1.touch = selecionarTsuru
-  tsuru2.touch = selecionarTsuru
-  tsuru3.touch = selecionarTsuru
-
-  tsuru1:addEventListener("touch", tsuru1)
-  tsuru2:addEventListener("touch", tsuru2)
-  tsuru3:addEventListener("touch", tsuru3)
-
-  -- Adicionar tsurus
-  -- tsuruTimer = timer.performWithDelay(3000, adicionarTsurus, 0 )
-
-  -- Adicionar Ori
-  -- adicionarOri()
-
-  -- Atualizar cena
-  -- Runtime:addEventListener('enterFrame', update)
-  -- Runtime:addEventListener("enterFrame", scrollingMontanhas)
-end
-
-function tsurusIniciais()
-
-end
 
 function montarCenario()
-  fundo = display.newImageRect(caminhoDiretorioEstilo .. "fundo.png", LARGURA_TELA, ALTURA_TELA)
+  fundo = display.newImageRect(caminhoDiretorioEstilo .. "fundo2.png", LARGURA_TELA, ALTURA_TELA)
   fundo.x = CENTRO_X
   fundo.y = CENTRO_Y
   scene.view:insert(fundo)
 
-  montanhasFundo = display.newImageRect(caminhoDiretorioEstilo .. "montanhas-fundo.png", LARGURA_TELA, ALTURA_TELA)
+  titulo1 = display.newText('ori', CENTRO_X - 90, CENTRO_Y - 162, "Origram", 70)
+  titulo1:setFillColor(244/255,67/255,54/255)
+  scene.view:insert(titulo1)
+  titulo2 = display.newText('game', CENTRO_X + 42, CENTRO_Y - 162, "Origram", 70)
+  scene.view:insert(titulo2)
+
+--[[  montanhasFundo = display.newImageRect(caminhoDiretorioEstilo .. "montanhas-fundo.png", LARGURA_TELA, ALTURA_TELA)
   montanhasFundo.x = CENTRO_X
   montanhasFundo.y = CENTRO_Y
   scene.view:insert(montanhasFundo)
@@ -177,7 +159,7 @@ function montarCenario()
   montanhasFrente = display.newImageRect(caminhoDiretorioEstilo .. "montanhas-frente.png", LARGURA_TELA, ALTURA_TELA)
   montanhasFrente.x = CENTRO_X
   montanhasFrente.y = CENTRO_Y
-  scene.view:insert(montanhasFrente)
+  scene.view:insert(montanhasFrente)]]
 
 --[[  montanhasFrente2 = display.newImageRect(caminhoDiretorioEstilo .. "montanhas-frente.png", LARGURA_TELA, ALTURA_TELA)
   montanhasFrente2.x = montanhasFrente.x + LARGURA_TELA
@@ -208,28 +190,28 @@ function montarCenario()
 end
 
 -- Carregar imagens contidas no menu
-function carregarMenu( )
-  btnTutorial = display.newImageRect(caminhoDiretorioEstilo .. "botao-tutorial.png", 40, 40)
-  btnTutorial.x = CENTRO_X - 130
-  btnTutorial.y = CENTRO_Y + 180
-  scene.view:insert(btnTutorial)
+function carregarMenu()
+  btnComoJogar = display.newImageRect(caminhoDiretorioEstilo .. "botao-tutorial.png", 40, 40)
+  btnComoJogar.x = CENTRO_X - 130
+  btnComoJogar.y = CENTRO_Y + 170
+  scene.view:insert(btnComoJogar)
 
   btnJogar = display.newImageRect(caminhoDiretorioEstilo .. "botao-jogar.png", 90, 90)
   btnJogar.x = CENTRO_X
-  btnJogar.y = CENTRO_Y + 157
+  btnJogar.y = CENTRO_Y + 147
   scene.view:insert(btnJogar)
 
   btnCreditos = display.newImageRect(caminhoDiretorioEstilo .. "botao-creditos.png", 40, 40)
   btnCreditos.x = CENTRO_X + 130
-  btnCreditos.y = CENTRO_Y + 180
+  btnCreditos.y = CENTRO_Y + 170
   scene.view:insert(btnCreditos)
 
   btnSair = display.newImageRect(caminhoDiretorioEstilo .. "botao-sair.png", 30, 30)
   btnSair.x = CENTRO_X + 300
-  btnSair.y = CENTRO_Y - 180
+  btnSair.y = CENTRO_Y - 160
   scene.view:insert(btnSair)
 
-  adicionarTsurus(false)
+  adicionarTsurus()
 end
 
 function scrollingMontanhas(event)
@@ -254,24 +236,81 @@ end
 function exibirTextos()
   -- Exibi a distância percorrida
   textoDistancia = display.newText("0 m", CENTRO_X - 160, CENTRO_Y - 180, "Origram", 16)
-
   textoDistancia:setTextColor(68, 68, 68)
+  scene.view:insert(textoDistancia)
 
   -- Exibi a pontuação
   textoPontuacao = display.newText("0", CENTRO_X, CENTRO_Y - 180, "Origram", 16)
   textoPontuacao:setTextColor(68, 68, 68)
+  scene.view:insert(textoPontuacao)
 
   -- Exibi a regra de difereciação
   iconeDiferenciacao = display.newImageRect(caminhoDiretorioEstilo .. "icone-diferente.png", 30, 20)
   iconeDiferenciacao.x = CENTRO_X + 160
   iconeDiferenciacao.y = CENTRO_Y - 180
+  scene.view:insert(iconeDiferenciacao)
 
   textoDiferenciacao = display.newText("", CENTRO_X + 205, CENTRO_Y - 180, "Origram", 16)
   textoDiferenciacao:setTextColor(68, 68, 68)
+  scene.view:insert(textoDiferenciacao)
+end
+
+
+function jogar()
+  --scene.view:remove(barreira)
+  scene.view:remove(btnJogar)
+  scene.view:remove(btnSair)
+  scene.view:remove(btnCreditos)
+  scene.view:remove(btnComoJogar)
+  scene.view:remove(titulo1)
+  scene.view:remove(titulo2)
+
+  pontuacao = 0
+
+  exibirTextos()
+
+  local removeTsuru = function(obj)
+    display.remove(obj)
+    obj = nil
+  end
+
+  tsuruInicio = tsuru3
+
+  --transição tsurus
+  transition.to(tsuru1, {time = calculaTempo(tsuru1.x), x = CENTRO_X - 400, y = tsuru1.y, tag="transicao", onComplete=removeTsuru})
+  transition.to(tsuru2, {time = calculaTempo(tsuru2.x), x = CENTRO_X - 400, y = tsuru2.y, tag="transicao", onComplete=removeTsuru})
+  transition.to(tsuru3, {time = calculaTempo(tsuru3.x), x = CENTRO_X- 400, y = tsuru3.y, tag="transicao", onComplete=removeTsuru})
+
+  --Adiciona manipulador ao toque
+  tsuru1.touch = selecionarTsuru
+  tsuru2.touch = selecionarTsuru
+  tsuru3.touch = selecionarTsuru
+
+  tsuru1:addEventListener("touch", tsuru1)
+  tsuru2:addEventListener("touch", tsuru2)
+  tsuru3:addEventListener("touch", tsuru3)
+
+--  adicionarTsurusCall = adicionarTsurus(true)
+
+
+  -- Adicionar tsurus
+   transicao = true
+   adicionarTsurus()
+   tsuruTimer =  timer.performWithDelay(3000, adicionarTsurus, 0)
+  -- Adicionar Ori
+  -- adicionarOri()
+
+  -- Atualizar cena
+  --  Runtime:addEventListener('enterFrame', update)
+  -- Runtime:addEventListener("enterFrame", scrollingMontanhas)
+end
+
+function calculaTempo(valorX)
+    return (valorX - (CENTRO_X - 400))/velocidade
 end
 
 -- Adicionar Tsurus
-function adicionarTsurus(transicao)
+function adicionarTsurus()
     local tsurus = {}
   --Speed up each 15 tsurus added
     if(contadorTsurus == limiteNivel) then
@@ -292,28 +331,31 @@ function adicionarTsurus(transicao)
 
     --Adiciona três tsurus
     --Adiciona tsuru no topo
-    tsuru1 = display.newRect(0,0,80,80)
+    tsuru1 = display.newRect(0,0,90,60)
     tsuru1.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma1 .. "/tsuru_" .. cor1 .. ".png"}
     tsuru1.color = cor1
     tsuru1.shape = forma1
     tsuru1.id = 1
     physics.addBody(tsuru1, "kinematic")
+    scene.view:insert(tsuru1)
 
     --Adiciona tsuru no meio
-    tsuru2 = display.newRect(0,0,80,80)
+    tsuru2 = display.newRect(0,0,90,60)
     tsuru2.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma2 .. "/tsuru_" .. cor2 .. ".png"}
     tsuru2.color = cor2
     tsuru2.shape = forma2
     tsuru2.id = 2
     physics.addBody(tsuru2, "kinematic")
+    scene.view:insert(tsuru2)
 
     --Adiona tsuru ao fundo
-    tsuru3 = display.newRect(0,0,80,80)
+    tsuru3 = display.newRect(0,0,90,60)
     tsuru3.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma3 .. "/tsuru_" .. cor3 .. ".png"}
     tsuru3.color = cor3
     tsuru3.shape = forma3
     tsuru3.id = 3
     physics.addBody(tsuru3, "kinematic")
+    scene.view:insert(tsuru3)
 
 
   --[[  print("tsuru1 = " .. caminhoDiretorioImagens .. "tsurus/" .. forma1 .. "/tsuru_" .. cor1 .. ".png")
@@ -324,19 +366,24 @@ function adicionarTsurus(transicao)
 
 
     if(transicao == true) then
-      tsuru1.x = LARGURA_TELA + 20
+      tsuru1.x = LARGURA_TELA + 40
       tsuru1.y = ALTURA_TELA - 230
 
       tsuru2.x = LARGURA_TELA + 150
-      tsuru2.y = ALTURA_TELA - 330
+      tsuru2.y = ALTURA_TELA - 300
 
-      tsuru3.x = LARGURA_TELA + 200
-      tsuru3.y = ALTURA_TELA - 130
+      tsuru3.x = LARGURA_TELA + 180
+      tsuru3.y = ALTURA_TELA - 160
+
+      local removeTsuru = function(obj)
+        display.remove(obj)
+        obj = nil
+      end
 
       --transição tsurus
-      transition.to(tsuru1, {time = velocidade, x = -150, y = tsuru1.y, tag="transicao"})
-      transition.to(tsuru2, {time = velocidade, x = -150, y = tsuru2.y, tag="transicao"})
-      transition.to(tsuru3, {time = velocidade, x = -150, y = tsuru3.y, tag="transicao"})
+      transition.to(tsuru1, {time = calculaTempo(tsuru1.x), x = CENTRO_X - 400, y = tsuru1.y, tag="transicao", onComplete=removeTsuru})
+      transition.to(tsuru2, {time = calculaTempo(tsuru2.x), x = CENTRO_X - 400, y = tsuru2.y, tag="transicao", onComplete=removeTsuru})
+      transition.to(tsuru3, {time = calculaTempo(tsuru3.x), x = CENTRO_X - 400, y = tsuru3.y, tag="transicao", onComplete=removeTsuru})
 
       --Adiciona manipulador ao toque
       tsuru1.touch = selecionarTsuru
@@ -351,21 +398,17 @@ function adicionarTsurus(transicao)
       tsuru1.y = CENTRO_Y - 20
 
       tsuru2.x = CENTRO_X + 180
-      tsuru2.y = CENTRO_Y - 120
+      tsuru2.y = CENTRO_Y - 100
 
       tsuru3.x = CENTRO_X + 200
-      tsuru3.y = CENTRO_Y + 40
-    end
-
-    if(tsuruIncio == nil) then
-      tsuruIncio = tsuru3
+      tsuru3.y = CENTRO_Y + 50
     end
 
     --adiciona tsurus a um grupo
-    grupoImagens:insert(tsuru1)
+  --[[  grupoImagens:insert(tsuru1)
     grupoImagens:insert(tsuru2)
     grupoImagens:insert(tsuru3)
-
+]]
     -- adiciona os três tsurus a uma table
     tsurus = {tsuru1, tsuru2, tsuru3}
 
@@ -380,7 +423,6 @@ function adicionarTsurus(transicao)
     contadorTsurus = contadorTsurus + 3
 end
 
-
 -- Embaralha itens de uma table
 function embaralhar(t)
     local j
@@ -394,12 +436,8 @@ end
 
 -- Tsuru é tocado
 function selecionarTsuru(self, event)
-  if(inicio == true) then
-    inicio = false
-  end
   -- Move Ori para o tsuru tocado
-  if(event.phase == "began" and ((primeiraEscolha) or (self.x > ori.x and self.x < (ori.x + 250)))) then
-    primeiraEscolha = false
+  if(event.phase == "began" and ((primeiraEscolha) or (self.x > ori.x and self.x < (ori.x + 420)))) then
 
   --  transition.to(tsuru, {time = 7000, x = -150, y = tsuru.y, tag="transicao"})
     ori.x = self.x
@@ -409,7 +447,8 @@ function selecionarTsuru(self, event)
       fimDeJogo()
     end
 
-    transition.to(ori, {time = velocidade, x = -100, y = ori.y, tag="transicao", onComplete=terminaJogo})
+    transition.cancel(ori)
+    transition.to(ori, {time = calculaTempo(self.x), x = CENTRO_X - 400, y = ori.y, tag="transicao", onComplete=terminaJogo})
 
     diferenciar(self)
 
@@ -419,7 +458,7 @@ function selecionarTsuru(self, event)
 
     removerTsurusNaoSelecionados(self.id)
 
-    self.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/tsuru_neutro.png"}
+    self.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/forma1/tsuru_preto.png"}
 
     ganharPonto(event)
   end
@@ -511,9 +550,9 @@ function update()
   -- utilizar o tamanho da tela do dispositivo LARGURA_TELA
 --  print("largura tela = " .. LARGURA_TELA)
   --print("ori x = " .. ori.x)
---[[ if(contadorTsurus == 1000 or (inicio == true and (tsuruIncio ~= nil and tsuruIncio.x < ori.x))) then
+  if(contadorTsurus == 1000 or ((tsuruInicio ~= nil) and tsuruInicio.x < (ori.x + 20))) then
     fimDeJogo()
-  end]]
+  end
 end
 
 function ganharPonto(event)
@@ -532,13 +571,6 @@ function ganharPonto(event)
     pontuacao = pontuacao + 10
   end
 
-  print("ultimo tempo = " .. ultimoTempo)
-  print("tempo atual = " .. tempoAtual)
-  print("diferencaTempo = " .. diferencaTempo)
-  print("pontos = " .. pontuacao)
-  print(".....................................")
-  print(" ")
-
   textoPontuacao.text = string.format("%d", pontuacao)
   ultimoTempo = tempoAtual
 end
@@ -551,6 +583,7 @@ local transicaofimDeJogoConfig = {
 
 -- Função que chama cena para início do jogo
 function fimDeJogo()
+  destroi = true
   composer.removeScene("jogo")
   composer.gotoScene("fim_de_jogo", transicaofimDeJogoConfig)
 end
@@ -558,36 +591,27 @@ end
 function scene:destroy(event)
   local sceneGroup = self.view
 
---  transition.cancel("transicao")
-  --timer.cancel(tsuruTimer)
-  --Runtime:removeEventListener("enterFrame", update)
---   Runtime:removeEventListener("enterFrame", scrollingMontanhas)
---  Runtime:removeEventListener("touch", tsuru1)
-  --Runtime:removeEventListener("touch", tsuru2)
---  Runtime:removeEventListener("touch", tsuru3)
-  display.remove(grupoImagens)
-  display.remove(textoDiferenciacao)
-  display.remove(etiquetaDiferenciacao)
-  display.remove(textoDistancia)
-  display.remove(etiquetaDistancia)
-  display.remove(textoPontuacao)
-  display.remove(etiquetaPontuacao)
+  if(destroi) then
+    transition.cancel("transicao")
+    timer.cancel(tsuruTimer)
+    Runtime:removeEventListener("enterFrame", update)
+    Runtime:removeEventListener("enterFrame", scrollingMontanhas)
+    Runtime:removeEventListener("touch", tsuru1)
+    Runtime:removeEventListener("touch", tsuru2)
+    Runtime:removeEventListener("touch", tsuru3)
+  end
 end
 
 function pausar()
   timer.pause(tsuruTimer)
   transition.pause("transicao")
+  physics.pause()
 end
 
 function resumir()
   timer.resumo(tsuruTimer)
   transition.resume("transicao")
 end
-
--- Configuração de transição entre cenas
-local transicaoCreditosConfig = {
-	effect = "fade", time = 550
-}
 
 -- Fechar app
 function fecharApp()
@@ -600,11 +624,29 @@ function fecharApp()
       end
 end
 
+
+-- Configuração de transição entre cenas
+local transicaoCreditosConfig = {
+	effect = "fade", time = 550
+}
+
+
+local transicaoComoJogarConfig = {
+	effect = "fade", time = 550
+}
+
 -- Função que chama cena de créditos do jogo
 function creditos()
   composer.removeScene("jogo")
 	composer.gotoScene("creditos", transicaoCreditosConfig)
 end
+
+-- Função que chama cena de créditos do jogo
+function comoJogar()
+  composer.removeScene("jogo")
+	composer.gotoScene("como_jogar", transicaoComoJogarConfig)
+end
+
 
 -- Listener Setup
 scene:addEventListener("create", scene)

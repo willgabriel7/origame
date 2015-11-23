@@ -1,6 +1,9 @@
 local composer = require("composer")
 local scene = composer.newScene()
-local cm
+local caminhoDiretorioEstilo = "resources/estilo/"
+local fundo
+local titulo1
+local titulo2
 local carregaMenu = {}
 local carregaFundo = {}
 
@@ -43,10 +46,16 @@ end
 
 
 function carregaFundo()
-  fundo = display.newImage("resources/estilo/preto/fundo_inicial.png", display.contentWidth, display.contentHeight)
+  fundo = display.newImage(caminhoDiretorioEstilo .. "fundo-telas.png", display.contentWidth, display.contentHeight)
   fundo.x = display.contentCenterX
   fundo.y = display.contentCenterY
   scene.view:insert(fundo)
+
+  titulo1 = display.newText('ori', display.contentCenterX - 90, display.contentCenterY, "Origram", 70)
+  titulo1:setFillColor(244/255,67/255,54/255)
+  scene.view:insert(titulo1)
+  titulo2 = display.newText('game', display.contentCenterX + 42, display.contentCenterY, "Origram", 70)
+  scene.view:insert(titulo2)
 end
 
 
@@ -57,7 +66,7 @@ local configTransitionMenu = {
 
 function carregaMenu()
   composer.removeScene("initial_screen")
-  composer.gotoScene("menu", configTransitionMenu)
+  composer.gotoScene("jogo", configTransitionMenu)
 end
 
 
