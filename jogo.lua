@@ -43,8 +43,8 @@ local tsuru1
 local tsuru2
 local tsuru3
 local caminhoDiretorioImagens = "resources/images/"
-local cores = {"amarelo", "ambar", "indigo", "laranja", "roxo", "vermelho"}
-local formas = {"forma1", "forma2", "forma3", "forma4", "forma5", "forma6"}
+local cores = {"ambar", "indigo", "laranja", "roxo", "vermelho"}
+local formas = {"forma1", "forma2", "forma3"}
 local grupoImagens = display.newGroup()
 local contadorTsurus = 0
 local tableTsurus = {}
@@ -119,7 +119,7 @@ function scene:show(event)
     btnSair:addEventListener("touch", fecharApp)
     btnComoJogar:addEventListener("touch", comoJogar)
 
-    if(jogarNovamente == true) then
+    if(isJogarNovamente) then
       jogar()
     end
   end
@@ -253,6 +253,13 @@ function exibirTextos()
   textoDiferenciacao = display.newText("", CENTRO_X + 205, CENTRO_Y - 180, "Origram", 16)
   textoDiferenciacao:setTextColor(68, 68, 68)
   scene.view:insert(textoDiferenciacao)
+
+  iconePausar = display.newImageRect(caminhoDiretorioEstilo .. "icone-pausar.png", 30, 30)
+  iconePausar.x = CENTRO_X + 300
+  iconePausar.y = CENTRO_Y - 180
+  scene.view:insert(iconePausar)
+
+  iconePausar:addEventListener("touch", pausar)
 end
 
 
@@ -301,7 +308,7 @@ function jogar()
   -- adicionarOri()
 
   -- Atualizar cena
-  --  Runtime:addEventListener('enterFrame', update)
+   Runtime:addEventListener('enterFrame', update)
   -- Runtime:addEventListener("enterFrame", scrollingMontanhas)
 end
 
@@ -315,7 +322,7 @@ function adicionarTsurus()
   --Speed up each 15 tsurus added
     if(contadorTsurus == limiteNivel) then
       limiteNivel = limiteNivel + 9
-    --  aumentarVelocidade()
+        aumentarVelocidade()
     end
 
     embaralhar(cores)
@@ -331,29 +338,35 @@ function adicionarTsurus()
 
     --Adiciona três tsurus
     --Adiciona tsuru no topo
-    tsuru1 = display.newRect(0,0,90,60)
-    tsuru1.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma1 .. "/tsuru_" .. cor1 .. ".png"}
-    tsuru1.color = cor1
-    tsuru1.shape = forma1
+    --tsuru1 = display.newRect(0,0,90,60)
+    tsuru1 = display.newImage(caminhoDiretorioImagens .. "tsurus/" .. forma1 .. "/tsuru_" .. cor1 .. ".png")
+    --tsuru1.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma1 .. "/tsuru_" .. cor1 .. ".png"}
+    tsuru1.cor = cor1
+    tsuru1.forma = forma1
     tsuru1.id = 1
+    tsuru1.isFullResolution = true
     physics.addBody(tsuru1, "kinematic")
     scene.view:insert(tsuru1)
 
     --Adiciona tsuru no meio
-    tsuru2 = display.newRect(0,0,90,60)
-    tsuru2.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma2 .. "/tsuru_" .. cor2 .. ".png"}
-    tsuru2.color = cor2
-    tsuru2.shape = forma2
+    --tsuru2 = display.newRect(0,0,90,60)
+    tsuru2 = display.newImage(caminhoDiretorioImagens .. "tsurus/" .. forma2 .. "/tsuru_" .. cor2 .. ".png")
+    --tsuru2.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma2 .. "/tsuru_" .. cor2 .. ".png"}
+    tsuru2.cor = cor2
+    tsuru2.forma = forma2
     tsuru2.id = 2
+    tsuru2.isFullResolution = true
     physics.addBody(tsuru2, "kinematic")
     scene.view:insert(tsuru2)
 
     --Adiona tsuru ao fundo
-    tsuru3 = display.newRect(0,0,90,60)
-    tsuru3.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma3 .. "/tsuru_" .. cor3 .. ".png"}
-    tsuru3.color = cor3
-    tsuru3.shape = forma3
+    --tsuru3 = display.newRect(0,0,90,60)
+    tsuru3 = display.newImage(caminhoDiretorioImagens .. "tsurus/" .. forma3 .. "/tsuru_" .. cor3 .. ".png")
+    --tsuru3.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma3 .. "/tsuru_" .. cor3 .. ".png"}
+    tsuru3.cor = cor3
+    tsuru3.forma = forma3
     tsuru3.id = 3
+    tsuru3.isFullResolution = true
     physics.addBody(tsuru3, "kinematic")
     scene.view:insert(tsuru3)
 
@@ -365,7 +378,7 @@ function adicionarTsurus()
     print(" ") print(" ")]]
 
 
-    if(transicao == true) then
+    if(transicao) then
       tsuru1.x = LARGURA_TELA + 40
       tsuru1.y = ALTURA_TELA - 230
 
@@ -436,6 +449,8 @@ end
 
 -- Tsuru é tocado
 function selecionarTsuru(self, event)
+    tsuruInicio = nil
+
   -- Move Ori para o tsuru tocado
   if(event.phase == "began" and ((primeiraEscolha) or (self.x > ori.x and self.x < (ori.x + 420)))) then
 
@@ -458,25 +473,44 @@ function selecionarTsuru(self, event)
 
     removerTsurusNaoSelecionados(self.id)
 
-    self.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/forma1/tsuru_preto.png"}
+    trocaTsurus(self)
 
     ganharPonto(event)
   end
 end
 
+
+function trocaTsurus(self)
+  local aux = display.newImage(caminhoDiretorioImagens .. "tsurus/forma1/tsuru_preto.png")
+  aux.x = self.x
+  aux.y = self.y
+  physics.addBody(aux, "kinematic")
+  grupoImagens:insert(aux)
+
+  local removeTsuru = function(obj)
+    display.remove(obj)
+    obj = nil
+  end
+
+  self.alpha = 0
+  transition.to(aux, {time = calculaTempo(self.x), x = CENTRO_X - 400, y = self.y, tag="transicao", onComplete=removeTsuru})
+  --self.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/forma1/tsuru_preto.png"}]
+end
+
+
 function diferenciar(TsuruAtual)
   if(regraDiferenciacao == "cor") then
-    if(TsuruAtual.color == ultimaCorSelecionada) then
+    if(TsuruAtual.cor == ultimaCorSelecionada) then
       fimDeJogo()
     end
   else
-    if(TsuruAtual.shape == ultimaFormaSelecionada) then
+    if(TsuruAtual.forma == ultimaFormaSelecionada) then
       fimDeJogo()
     end
   end
 
-  ultimaCorSelecionada = TsuruAtual.color
-  ultimaFormaSelecionada = TsuruAtual.shape
+  ultimaCorSelecionada = TsuruAtual.cor
+  ultimaFormaSelecionada = TsuruAtual.forma
 
   mudarRegraDiferenciacao()
 end
@@ -543,14 +577,14 @@ end
 
 -- Aumenta a velocidade
 function aumentarVelocidade()
-  velocidade = velocidade - 1000
+  velocidade = velocidade + .1
 end
 
 function update()
   -- utilizar o tamanho da tela do dispositivo LARGURA_TELA
 --  print("largura tela = " .. LARGURA_TELA)
   --print("ori x = " .. ori.x)
-  if(contadorTsurus == 1000 or ((tsuruInicio ~= nil) and tsuruInicio.x < (ori.x + 20))) then
+  if(contadorTsurus == 1000 or ((tsuruInicio ~= nil) and tsuruInicio.x < (ori.x - 20))) then
     fimDeJogo()
   end
 end
@@ -559,13 +593,13 @@ function ganharPonto(event)
   tempoAtual = event.time/1000
   local diferencaTempo = tempoAtual - ultimoTempo
 
-  if(diferencaTempo < 1.000) then
+  if(diferencaTempo < 1.500) then
     pontuacao = pontuacao + 90
-  elseif(diferencaTempo > 1.000 and diferencaTempo < 2.000) then
+  elseif(diferencaTempo > 1.500 and diferencaTempo < 2.500) then
       pontuacao = pontuacao + 70
-  elseif(diferencaTempo > 2.000 and diferencaTempo < 3.000) then
+  elseif(diferencaTempo > 2.500 and diferencaTempo < 3.500) then
     pontuacao = pontuacao + 50
-  elseif(diferencaTempo > 3.000  and diferencaTempo < 4.000) then
+  elseif(diferencaTempo > 3.500  and diferencaTempo < 4.500) then
     pontuacao = pontuacao + 30
   else
     pontuacao = pontuacao + 10
@@ -592,6 +626,7 @@ function scene:destroy(event)
   local sceneGroup = self.view
 
   if(destroi) then
+    display.remove(grupoImagens)
     transition.cancel("transicao")
     timer.cancel(tsuruTimer)
     Runtime:removeEventListener("enterFrame", update)

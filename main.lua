@@ -8,11 +8,11 @@ local transicaoInicioConfig = {
 
 
 local composer = require ("composer")
-composer.gotoScene("inicio", transicaoInicioConfig)
+composer.gotoScene("jogo", transicaoInicioConfig)
 
 
 -- Variáveis globais
 distancia = 0
 totalTsurusSaltados = 0
 pontuacao = 0
-jogarNovamente = false
+isJogarNovamente = false

@@ -101,11 +101,13 @@ local transicaoJogarNovamenteConfig = {
 
 -- Função que chama cena para retorno ao jogo
 function jogarNovamente()
+  isJogarNovamente = true
+  pontuacao = 0
+  distancia = 0
+  totalTsurusSaltados = 0
+
   composer.removeScene("fim_de_jogo")
 	composer.gotoScene("jogo", transicaoJogarNovamenteConfigs)
---  distancia = 0
---  totalTsurusSaltados = 0
-  jogarNovamente = true
 end
 
 
