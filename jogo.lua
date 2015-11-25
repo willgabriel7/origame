@@ -50,7 +50,7 @@ local contadorTsurus = 0
 local tableTsurus = {}
 local indice = 1
 local trioTsurusAtual = 1
-local limiteNivel = 9
+local limiteNivel = 30
 local primeiraEscolha = true
 local ultimoTempo = 4.000
 local tempoAtual
@@ -69,7 +69,10 @@ local btnComoJogar
 local destroi = false
 local titulo1
 local titulo2
-local frequencia = 1000
+local frequencia = 3000
+local nivel = 1
+local toquePausar = false
+local salto = true
 
 -- Funções
 local adicionarOri = {}
@@ -79,7 +82,7 @@ local diferenciar = {}
 local fimDeJogo = {}
 local selecionarTsuru = {}
 local aumentarVelocidade = {}
-local update = {}
+local inspesionador = {}
 local embaralhar = {}
 local removerTsurusNaoSelecionados = {}
 local pausar = {}
@@ -257,11 +260,18 @@ function exibirTextos()
   iconePausar = display.newImageRect(caminhoDiretorioEstilo .. "icone-pausar.png", 30, 30)
   iconePausar.x = CENTRO_X + 300
   iconePausar.y = CENTRO_Y - 180
+  iconePausar.alpha = 1
   scene.view:insert(iconePausar)
 
-  iconePausar:addEventListener("touch", pausar)
-end
+  iconeResume = display.newImageRect(caminhoDiretorioEstilo .. "icone-resume.png", 30, 30)
+  iconeResume.x = CENTRO_X + 300
+  iconeResume.y = CENTRO_Y - 180
+  iconeResume.alpha = 0
+  scene.view:insert(iconeResume)
 
+  iconePausar:addEventListener("touch", pausar)
+  iconeResume:addEventListener("touch", retormar)
+end
 
 function jogar()
   --scene.view:remove(barreira)
@@ -273,6 +283,8 @@ function jogar()
   scene.view:remove(titulo2)
 
   pontuacao = 0
+
+  aumentarNivel()
 
   exibirTextos()
 
@@ -303,12 +315,12 @@ function jogar()
   -- Adicionar tsurus
    transicao = true
    adicionarTsurus()
-   tsuruTimer =  timer.performWithDelay(3000, adicionarTsurus, 0)
+   tsuruTimer =  timer.performWithDelay(frequencia, adicionarTsurus, 0)
   -- Adicionar Ori
   -- adicionarOri()
 
   -- Atualizar cena
-   Runtime:addEventListener('enterFrame', update)
+   Runtime:addEventListener('enterFrame', inspesionador)
   -- Runtime:addEventListener("enterFrame", scrollingMontanhas)
 end
 
@@ -316,13 +328,13 @@ function calculaTempo(valorX)
     return (valorX - (CENTRO_X - 400))/velocidade
 end
 
+
 -- Adicionar Tsurus
 function adicionarTsurus()
     local tsurus = {}
   --Speed up each 15 tsurus added
     if(contadorTsurus == limiteNivel) then
-      limiteNivel = limiteNivel + 9
-        aumentarVelocidade()
+        novoNivel()
     end
 
     embaralhar(cores)
@@ -452,7 +464,7 @@ function selecionarTsuru(self, event)
     tsuruInicio = nil
 
   -- Move Ori para o tsuru tocado
-  if(event.phase == "began" and ((primeiraEscolha) or (self.x > ori.x and self.x < (ori.x + 420)))) then
+  if(event.phase == "began" and salto and ((primeiraEscolha) or (self.x > ori.x and self.x < (ori.x + 420)))) then
 
   --  transition.to(tsuru, {time = 7000, x = -150, y = tsuru.y, tag="transicao"})
     ori.x = self.x
@@ -577,37 +589,75 @@ end
 
 -- Aumenta a velocidade
 function aumentarVelocidade()
-  velocidade = velocidade + .1
+  velocidade = velocidade + .02
+  timer.cancel(tsuruTimer)
+  frequencia = frequencia - 500
+  tsuruTimer =  timer.performWithDelay(frequencia, adicionarTsurus, 0)
 end
 
-function update()
-  -- utilizar o tamanho da tela do dispositivo LARGURA_TELA
---  print("largura tela = " .. LARGURA_TELA)
-  --print("ori x = " .. ori.x)
-  if(contadorTsurus == 1000 or ((tsuruInicio ~= nil) and tsuruInicio.x < (ori.x - 20))) then
+function inspesionador()
+  if((tsuruInicio ~= nil) and tsuruInicio.x < (ori.x - 20)) then
     fimDeJogo()
   end
+
+--fim de jogo
+  if(contadorTsurus == 1000) then
+      finalizar()
+  end
 end
+
 
 function ganharPonto(event)
   tempoAtual = event.time/1000
   local diferencaTempo = tempoAtual - ultimoTempo
 
   if(diferencaTempo < 1.500) then
-    pontuacao = pontuacao + 90
-  elseif(diferencaTempo > 1.500 and diferencaTempo < 2.500) then
-      pontuacao = pontuacao + 70
-  elseif(diferencaTempo > 2.500 and diferencaTempo < 3.500) then
     pontuacao = pontuacao + 50
-  elseif(diferencaTempo > 3.500  and diferencaTempo < 4.500) then
-    pontuacao = pontuacao + 30
-  else
+  elseif(diferencaTempo > 1.500 and diferencaTempo < 3000) then
+      pontuacao = pontuacao + 30
+  elseif(diferencaTempo > 3000) then
     pontuacao = pontuacao + 10
   end
 
   textoPontuacao.text = string.format("%d", pontuacao)
   ultimoTempo = tempoAtual
 end
+
+
+function mostraTextoNovoNivel(nomePlaneta)
+ nivelTexto = display.newText(nomePlaneta, display.contentWidth, display.contentHeight, "Origram", 50)
+ nivelTexto.x = CENTRO_X
+ nivelTexto.y = CENTRO_Y
+ nivelTexto.alpha = 0
+ scene.view:insert(nivelTexto)
+end
+
+
+function efeitoTextoNovoNivel()
+  if (nivelTexto ~= nil) then
+    if (nivelTexto.alpha > 0) then
+        transition.to(nivelTexto, {time=2000, alpha=0})
+    else
+        transition.to(nivelTexto, {time=2000, alpha=1})
+    end
+  end
+end
+
+
+function aumentarNivel()
+  mostraTextoNovoNivel("Nível " .. nivel)
+  nivelTimer = timer.performWithDelay(2000, efeitoTextoNovoNivel, 2)
+  nivel = nivel + 1
+end
+
+function novoNivel()
+  aumentarNivel()
+
+  aumentarVelocidade()
+
+  limiteNivel = limiteNivel + 30
+end
+
 
 -- Configuração de transição entre cenas
 local transicaofimDeJogoConfig = {
@@ -629,7 +679,10 @@ function scene:destroy(event)
     display.remove(grupoImagens)
     transition.cancel("transicao")
     timer.cancel(tsuruTimer)
-    Runtime:removeEventListener("enterFrame", update)
+    timer.cancel(nivelTimer)
+    iconePausar:removeEventListener("touch", pausar)
+    iconeResume:removeEventListener("touch", retormar)
+    Runtime:removeEventListener("enterFrame", inspesionador)
     Runtime:removeEventListener("enterFrame", scrollingMontanhas)
     Runtime:removeEventListener("touch", tsuru1)
     Runtime:removeEventListener("touch", tsuru2)
@@ -638,15 +691,48 @@ function scene:destroy(event)
 end
 
 function pausar()
-  timer.pause(tsuruTimer)
-  transition.pause("transicao")
-  physics.pause()
+  if (toquePausar == false) then
+    iconePausar:addEventListener("touch", pausarJogo)
+    toquePausar = true
+  else
+    iconeResume:removeEventListener("touch", retormarJogo)
+    iconePausar:addEventListener("touch", pausarJogo)
+  end
 end
 
-function resumir()
-  timer.resumo(tsuruTimer)
-  transition.resume("transicao")
+function pausarJogo(event)
+  if (event.phase == "began" and iconePausar.alpha == 1) then
+   transition.pause("transicao")
+   timer.pause(tsuruTimer)
+   timer.pause(nivelTimer)
+   physics.pause()
+   salto = false
+
+   iconePausar.alpha = 0
+   iconeResume.alpha = 1
+  end
 end
+
+function retormar()
+  if (toquePausar == true) then
+    iconePausar:removeEventListener("touch", pausar)
+    iconeResume:addEventListener("touch", retormarJogo)
+  end
+end
+
+function retormarJogo(event)
+  if (event.phase == "began" and iconeResume.alpha == 1) then
+   transition.resume("transicao")
+   timer.resume(tsuruTimer)
+   timer.resume(nivelTimer)
+   physics.start(true)
+   salto = true
+
+   iconePausar.alpha = 1
+   iconeResume.alpha = 0
+  end
+end
+
 
 -- Fechar app
 function fecharApp()
@@ -670,6 +756,12 @@ local transicaoComoJogarConfig = {
 	effect = "fade", time = 550
 }
 
+
+local transicaoComoJogarConfig = {
+	effect = "crossFade", time = 550
+}
+
+
 -- Função que chama cena de créditos do jogo
 function creditos()
   composer.removeScene("jogo")
@@ -680,6 +772,11 @@ end
 function comoJogar()
   composer.removeScene("jogo")
 	composer.gotoScene("como_jogar", transicaoComoJogarConfig)
+end
+
+function finalizar()
+  composer.remove("jogo")
+  composer.gotoScene("final", transicaoFinalConfig)
 end
 
 
