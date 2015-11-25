@@ -43,6 +43,7 @@ local tsuru1
 local tsuru2
 local tsuru3
 local caminhoDiretorioImagens = "resources/images/"
+local caminhoDiretorioSom = "resources/sons/"
 local cores = {"ambar", "indigo", "laranja", "roxo", "vermelho"}
 local formas = {"forma1", "forma2", "forma3"}
 local grupoImagens = display.newGroup()
@@ -107,6 +108,10 @@ function scene:create(event)
 
   -- monta cenario
   montarCenario()
+
+  local somMenu = audio.loadStream(caminhoDiretorioSom .. "chinese-traditional-4.aif.mp3" )
+  audio.play(somMenu, {loops = -1, channel = 1, fadeout=1000})
+  audio.setVolume( 0.50 , { channel=1 })
 
 end
 
@@ -282,9 +287,29 @@ function jogar()
   scene.view:remove(titulo1)
   scene.view:remove(titulo2)
 
+  audio.stop(1)
+
   pontuacao = 0
 
   aumentarNivel()
+
+  local somGongo = audio.loadStream(caminhoDiretorioSom .. "gongo.wav" )
+  audio.play(somGongo, {loops = 0, channel=2, fadein=1000})
+  audio.setVolume(0.50 , { channel=2 })
+
+  local somVento = audio.loadStream(caminhoDiretorioSom .. "wind.ogg" )
+  audio.play(somVento, {loops = -1, channel = 3, fadeout=1000})
+  audio.setVolume( 0.20 , { channel=2 })
+
+
+  local somVento2 = audio.loadStream(caminhoDiretorioSom .. "wind3.ogg" )
+  audio.play(somVento2, {loops = -1, channel = 4, fadeout=1000})
+  audio.setVolume( 0.10 , { channel=4 })
+
+  local somFundo = audio.loadStream(caminhoDiretorioSom .. "background-sound.wav" )
+  audio.play(somFundo, {loops = -1, channel = 5, fadeout=100})
+  audio.setVolume( 0.30 , { channel=5 })
+
 
   exibirTextos()
 
@@ -465,7 +490,6 @@ function selecionarTsuru(self, event)
 
   -- Move Ori para o tsuru tocado
   if(event.phase == "began" and salto and ((primeiraEscolha) or (self.x > ori.x and self.x < (ori.x + 420)))) then
-
   --  transition.to(tsuru, {time = 7000, x = -150, y = tsuru.y, tag="transicao"})
     ori.x = self.x
     ori.y = self.y - 25
@@ -511,14 +535,25 @@ end
 
 
 function diferenciar(TsuruAtual)
+  local diferente = true
+  local somTsuru
+
   if(regraDiferenciacao == "cor") then
     if(TsuruAtual.cor == ultimaCorSelecionada) then
-      fimDeJogo()
+      diferente = false
     end
   else
     if(TsuruAtual.forma == ultimaFormaSelecionada) then
-      fimDeJogo()
+      diferente = false
     end
+  end
+
+  if(diferente) then
+    somTsuru = audio.loadStream(caminhoDiretorioSom .. "bird.wav" )
+    audio.play(somTsuru, {fadeout=100})
+  else
+      somTsuru = audio.loadStream(caminhoDiretorioSom .. "cricket.wav" )
+      audio.play(somTsuru, {fadeout=100, onComplete=fimDeJogo})
   end
 
   ultimaCorSelecionada = TsuruAtual.cor
@@ -601,7 +636,7 @@ function inspesionador()
   end
 
 --fim de jogo
-  if(contadorTsurus == 1000) then
+  if(contadorTsurus == 150) then
       finalizar()
   end
 end
@@ -676,6 +711,9 @@ function scene:destroy(event)
   local sceneGroup = self.view
 
   if(destroi) then
+    audio.stop(3)
+    audio.stop(4)
+    audio.stop(5)
     display.remove(grupoImagens)
     transition.cancel("transicao")
     timer.cancel(tsuruTimer)
@@ -707,6 +745,10 @@ function pausarJogo(event)
    timer.pause(nivelTimer)
    physics.pause()
    salto = false
+   audio.pause(3)
+   audio.pause(4)
+   audio.pause(5)
+   audio.pause(2)
 
    iconePausar.alpha = 0
    iconeResume.alpha = 1
@@ -727,6 +769,10 @@ function retormarJogo(event)
    timer.resume(nivelTimer)
    physics.start(true)
    salto = true
+   audio.resume(3)
+   audio.resume(4)
+   audio.resume(5)
+   audio.resume(2)
 
    iconePausar.alpha = 1
    iconeResume.alpha = 0

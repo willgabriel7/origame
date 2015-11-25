@@ -7,6 +7,7 @@ physics.start()
 
 -- Declarar/Inicializar variáveis/funções
 local caminhoDiretorioEstilo = "resources/estilo/"
+local caminhoDiretorioSom = "resources/sons/"
 local fimDeJogoTxt
 local btnJogarNovamente
 local btnIrParaMenu
@@ -24,6 +25,10 @@ local irParaMenu = {}
 function scene:create(event)
   local sceneGroup = self.view
   carregarFimDeJogo()
+
+  local somFimDeJogo = audio.loadStream(caminhoDiretorioSom .. "chinese-traditional-5.aif.mp3" )
+  audio.play(somFimDeJogo, {loops = -1, channel = 1, fadeout=1000})
+  audio.setVolume( 0.50 , { channel=1 })
 end
 
 
@@ -59,6 +64,7 @@ end
 -- Scene:destroy
 function scene:destroy(event)
   local sceneGroup = self.view
+  audio.stop(1)
 end
 
 
