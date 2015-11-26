@@ -95,6 +95,9 @@ function carregarCreditos( )
   creditosTxt = display.newText("Origram Font - behance.net/gallery/2818175/ORIGRAM-Free-Font", display.contentCenterX, display.contentCenterY + 100, "Origram", 16)
   scene.view:insert(creditosTxt)
 
+  creditosTxt = display.newText("Em homenagem à Sadako Sasaki", display.contentCenterX, display.contentCenterY + 125, "Origram", 12)
+  scene.view:insert(creditosTxt)
+
 --[[  creditosTxt = display.newText("Fonte de Pesquisa:", display.contentCenterX, display.contentCenterY + 90, "Origram", 18)
   scene.view:insert(creditosTxt)
   creditosTxt = display.newText("Corona Labs - coronalabs.com", display.contentCenterX, display.contentCenterY +  110, "Origram", 16)

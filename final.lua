@@ -7,6 +7,7 @@ physics.start()
 
 -- Declarar/Inicializar variáveis/funções
 local caminhoDiretorioEstilo = "resources/estilo/"
+local caminhoDiretorioImagens = "resources/images/"
 local caminhoDiretorioSom = "resources/sons/"
 local fimDeJogoTxt
 local btnJogarNovamente
@@ -94,14 +95,19 @@ function carregarFimDeJogo( )
   resultadoTxt = display.newText('a tempo de salvar minha aldeia das Traças devoradoras de papel.', display.contentCenterX, display.contentCenterY - 80, "Origram", 18)
   scene.view:insert(resultadoTxt)
 
+  oriFrente = display.newImageRect(caminhoDiretorioImagens .. "ori-frente.png", 100, 150)
+  oriFrente.x = display.contentCenterX
+  oriFrente.y = display.contentCenterY + 10
+  scene.view:insert(oriFrente)
 
-  totalPontosTxt = display.newText("Pontuação Final:  " , display.contentCenterX - 200 , display.contentCenterY + 100, "Origram", 14)
+
+  totalPontosTxt = display.newText("Pontuação Final:  " .. pontuacao , display.contentCenterX - 200 , display.contentCenterY + 110, "Origram", 16)
   scene.view:insert(totalPontosTxt)
 
-  totalTsurusSaltadosTxt = display.newText("Tsurus Saltados:  ", display.contentCenterX, display.contentCenterY + 100, "Origram", 14)
+  totalTsurusSaltadosTxt = display.newText("Tsurus Saltados:  " .. totalTsurusSaltados, display.contentCenterX, display.contentCenterY + 110, "Origram", 16)
   scene.view:insert(totalTsurusSaltadosTxt)
 
-  distanciaPercorridaTxt = display.newText("Distância Percorrida: ", display.contentCenterX + 200, display.contentCenterY + 100 , "Origram", 14)
+  distanciaPercorridaTxt = display.newText("Distância Percorrida: " .. distancia .. "m", display.contentCenterX + 200, display.contentCenterY + 110 , "Origram", 16)
   scene.view:insert(distanciaPercorridaTxt)
 end
 

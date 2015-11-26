@@ -97,6 +97,9 @@ local carregarMenu = {}
 local fecharApp = {}
 local montarCenario = {}
 local jogar = {}
+local options = {width = 90.6, height = 64, numFrames = 4}
+local tsurusAnim = { name="fly", start = 1, count = 4, time = 1000, loopCount = 0}
+
 
 local transicao = false
 
@@ -262,13 +265,13 @@ function exibirTextos()
   textoDiferenciacao:setTextColor(68, 68, 68)
   scene.view:insert(textoDiferenciacao)
 
-  iconePausar = display.newImageRect(caminhoDiretorioEstilo .. "icone-pausar.png", 30, 30)
+  iconePausar = display.newImageRect(caminhoDiretorioEstilo .. "icone-pausar.png", 30, 25)
   iconePausar.x = CENTRO_X + 300
   iconePausar.y = CENTRO_Y - 180
   iconePausar.alpha = 1
   scene.view:insert(iconePausar)
 
-  iconeResume = display.newImageRect(caminhoDiretorioEstilo .. "icone-resume.png", 30, 30)
+  iconeResume = display.newImageRect(caminhoDiretorioEstilo .. "icone-resume.png", 30, 25)
   iconeResume.x = CENTRO_X + 300
   iconeResume.y = CENTRO_Y - 180
   iconeResume.alpha = 0
@@ -320,6 +323,10 @@ function jogar()
 
   tsuruInicio = tsuru3
 
+  tsuru1:play()
+  tsuru2:play()
+  tsuru3:play()
+
   --transição tsurus
   transition.to(tsuru1, {time = calculaTempo(tsuru1.x), x = CENTRO_X - 400, y = tsuru1.y, tag="transicao", onComplete=removeTsuru})
   transition.to(tsuru2, {time = calculaTempo(tsuru2.x), x = CENTRO_X - 400, y = tsuru2.y, tag="transicao", onComplete=removeTsuru})
@@ -357,7 +364,7 @@ end
 -- Adicionar Tsurus
 function adicionarTsurus()
     local tsurus = {}
-  --Speed up each 15 tsurus added
+
     if(contadorTsurus == limiteNivel) then
         novoNivel()
     end
@@ -373,10 +380,14 @@ function adicionarTsurus()
     local forma2 = formas[2]
     local forma3 = formas[3]
 
+    local tsuru1Sheet = graphics.newImageSheet(caminhoDiretorioImagens .. "tsurus/" .. forma1 .. "/tsuru_" .. cor1 .. ".png", options )
+    local tsuru2Sheet = graphics.newImageSheet(caminhoDiretorioImagens .. "tsurus/" .. forma2 .. "/tsuru_" .. cor2 .. ".png", options )
+    local tsuru3Sheet = graphics.newImageSheet(caminhoDiretorioImagens .. "tsurus/" .. forma3 .. "/tsuru_" .. cor3 .. ".png", options )
+
     --Adiciona três tsurus
     --Adiciona tsuru no topo
     --tsuru1 = display.newRect(0,0,90,60)
-    tsuru1 = display.newImage(caminhoDiretorioImagens .. "tsurus/" .. forma1 .. "/tsuru_" .. cor1 .. ".png")
+    tsuru1 = display.newSprite(tsuru1Sheet, tsurusAnim)
     --tsuru1.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma1 .. "/tsuru_" .. cor1 .. ".png"}
     tsuru1.cor = cor1
     tsuru1.forma = forma1
@@ -387,7 +398,7 @@ function adicionarTsurus()
 
     --Adiciona tsuru no meio
     --tsuru2 = display.newRect(0,0,90,60)
-    tsuru2 = display.newImage(caminhoDiretorioImagens .. "tsurus/" .. forma2 .. "/tsuru_" .. cor2 .. ".png")
+    tsuru2 = display.newSprite(tsuru2Sheet, tsurusAnim)
     --tsuru2.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma2 .. "/tsuru_" .. cor2 .. ".png"}
     tsuru2.cor = cor2
     tsuru2.forma = forma2
@@ -398,7 +409,7 @@ function adicionarTsurus()
 
     --Adiona tsuru ao fundo
     --tsuru3 = display.newRect(0,0,90,60)
-    tsuru3 = display.newImage(caminhoDiretorioImagens .. "tsurus/" .. forma3 .. "/tsuru_" .. cor3 .. ".png")
+    tsuru3 = display.newSprite(tsuru3Sheet, tsurusAnim)
     --tsuru3.fill = {type="image", filename=caminhoDiretorioImagens .. "tsurus/" .. forma3 .. "/tsuru_" .. cor3 .. ".png"}
     tsuru3.cor = cor3
     tsuru3.forma = forma3
@@ -418,12 +429,15 @@ function adicionarTsurus()
     if(transicao) then
       tsuru1.x = LARGURA_TELA + 40
       tsuru1.y = ALTURA_TELA - 230
+      tsuru1:play()
 
       tsuru2.x = LARGURA_TELA + 150
       tsuru2.y = ALTURA_TELA - 300
+      tsuru2:play()
 
       tsuru3.x = LARGURA_TELA + 180
       tsuru3.y = ALTURA_TELA - 160
+      tsuru3:play()
 
       local removeTsuru = function(obj)
         display.remove(obj)
@@ -489,7 +503,8 @@ function selecionarTsuru(self, event)
     tsuruInicio = nil
 
   -- Move Ori para o tsuru tocado
-  if(event.phase == "began" and salto and ((primeiraEscolha) or (self.x > ori.x and self.x < (ori.x + 420)))) then
+  if((event.phase == "began" and salto) and (primeiraEscolha or ((self.x > ori.x) and (self.x < (ori.x +  450))))) then
+    primeiraEscolha = false
   --  transition.to(tsuru, {time = 7000, x = -150, y = tsuru.y, tag="transicao"})
     ori.x = self.x
     ori.y = self.y - 25
@@ -517,9 +532,11 @@ end
 
 
 function trocaTsurus(self)
-  local aux = display.newImage(caminhoDiretorioImagens .. "tsurus/forma1/tsuru_preto.png")
+  local auxSheet = graphics.newImageSheet(caminhoDiretorioImagens .. "tsurus/tsuru_neutro.png", options )
+  local aux = display.newSprite(auxSheet, tsurusAnim)
   aux.x = self.x
   aux.y = self.y
+  aux:play()
   physics.addBody(aux, "kinematic")
   grupoImagens:insert(aux)
 
@@ -662,7 +679,7 @@ end
 function mostraTextoNovoNivel(nomePlaneta)
  nivelTexto = display.newText(nomePlaneta, display.contentWidth, display.contentHeight, "Origram", 50)
  nivelTexto.x = CENTRO_X
- nivelTexto.y = CENTRO_Y
+ nivelTexto.y = CENTRO_Y + 100
  nivelTexto.alpha = 0
  scene.view:insert(nivelTexto)
 end
@@ -803,7 +820,7 @@ local transicaoComoJogarConfig = {
 }
 
 
-local transicaoComoJogarConfig = {
+local transicaoFinalConfig = {
 	effect = "crossFade", time = 550
 }
 
@@ -821,7 +838,8 @@ function comoJogar()
 end
 
 function finalizar()
-  composer.remove("jogo")
+  destroi = true
+  composer.removeScene("jogo")
   composer.gotoScene("final", transicaoFinalConfig)
 end
 

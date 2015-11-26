@@ -85,7 +85,7 @@ function carregarFimDeJogo( )
   btnIrParaMenu.y = display.contentCenterY + 170
   scene.view:insert(btnIrParaMenu)
 
-  resultadoTxt = display.newText('fim de jogo!', display.contentCenterX, display.contentCenterY - 150, "Origram", 40)
+  resultadoTxt = display.newText('fim de jogo!', display.contentCenterX, display.contentCenterY - 120, "Origram", 40)
   scene.view:insert(resultadoTxt)
 
   totalPontosTxt = display.newText("Pontuação Final:  " .. pontuacao , display.contentCenterX, display.contentCenterY - 40, "Origram", 25)
@@ -120,7 +120,7 @@ end
 -- Função que chama cena para retorno ao jogo
 function irParaMenu()
   composer.removeScene("fim_de_jogo")
-  jogarNovamente = false
+  isJogarNovamente = false
 	composer.gotoScene("jogo", transicaoJogarNovamenteConfig)
 --  distancia = 0
 --  totalTsurusSaltados = 0
