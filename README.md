@@ -1,10 +1,12 @@
 # origame
 
 <h1 align="center">
-    <img alt="Ori Logo" src="resources/images/logo.png" height="200" style="width: 100vw;" />
+    <img alt="Ori Logo" src="resources/images/ori-logo.png" height="200" style="width: 100vw;" />
 </h1>
 
 ## About
+
+\*\*\*This project was developed as a college activity.
 
 Origame is a mobile game that aims to develop cognitive skills such as memory, attention and perception of its player.
 
@@ -16,7 +18,7 @@ but luckily for her a flock of Tsurus comes. fleeing the moths flying over your 
 people, she will have to jump over the Tsurus.
 
 <h2 align="center">
-  <img alt="Characters" src="resources/images/characters-ecemples.png"/>
+  <img alt="Characters" src="resources/images/characters-examples.png"/>
   <br />
   <img alt="Screeshots" src="resources/images/screenshots.png"/>
 </h2>
